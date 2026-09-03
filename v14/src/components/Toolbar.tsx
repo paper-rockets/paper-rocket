@@ -984,6 +984,29 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
                 </div>
               </button>
 
+              {/* 4B. 3D MODELS & ASSETS LOADER */}
+              {onOpenModelLibrary && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onOpenModelLibrary();
+                    triggerHaptic(15);
+                    if (!isPinned) scheduleAutoCollapse(1200);
+                  }}
+                  className={`w-full py-2 px-2.5 rounded-xl flex items-center justify-between transition-all cursor-pointer ${
+                    theme === 'light'
+                      ? 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+                      : 'bg-white/5 text-zinc-300 hover:bg-white/10'
+                  }`}
+                  title="Open 3D Model Catalog & Import GLB, OBJ, STL, FBX"
+                >
+                  <div className="flex items-center gap-2">
+                    <FolderArchive className="w-4 h-4 text-emerald-400 stroke-[2]" />
+                    <span className="text-xs font-semibold">3D Models</span>
+                  </div>
+                </button>
+              )}
+
               {/* 5. PRO STUDIO DRAWER TOGGLE */}
               <button
                 type="button"
@@ -1005,6 +1028,17 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
               {/* Pro Tools Drawer Dropdown */}
               {showProDrawer && (
                 <div className={`flex flex-col gap-1 p-1 rounded-xl border ${theme === 'light' ? 'bg-neutral-100 border-neutral-300' : 'bg-black/30 border-zinc-700/30'}`}>
+                  {onOpenModelLibrary && (
+                    <button
+                      type="button"
+                      onClick={onOpenModelLibrary}
+                      className="px-2 py-1 text-left text-[11px] text-zinc-300 hover:text-white hover:bg-white/10 rounded-lg flex items-center gap-2 cursor-pointer"
+                      title="Open 3D Model Catalog & Import GLB, OBJ, STL, FBX"
+                    >
+                      <FolderArchive className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>3D Model Loader</span>
+                    </button>
+                  )}
                   {onOpenBentGuide && (
                     <button
                       type="button"
