@@ -509,7 +509,7 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
 
   return (
     <div
-      className="fixed top-12 sm:top-14 left-2 sm:left-3 z-30 flex items-start gap-2 select-none font-sans transform-gpu isolate"
+      className="fixed top-12 sm:top-14 left-2 sm:left-3 z-30 flex items-start gap-2 select-none font-sans transform-gpu isolate will-change-transform"
       style={{
         transform: uiScale !== 1.0 ? `scale(${uiScale})` : undefined,
         transformOrigin: 'top left',
@@ -524,7 +524,7 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
         /* MINIMIZED SLIM VERTICAL RAIL - MINIMIZES SIDEWAYS TO THE LEFT */
         <div
           id="mody-left-toolbar-minimized"
-          className={`w-12 sm:w-13 py-2.5 px-1.5 rounded-2xl border shadow-xl flex flex-col items-center gap-1.5 transition-all select-none ${
+          className={`w-12 sm:w-13 py-2.5 px-1.5 rounded-2xl border flex flex-col items-center gap-1.5 select-none ${
             theme === 'light'
               ? 'bg-white border-neutral-200 text-neutral-800'
               : 'bg-[#18191d] border-[#2b2c32] text-zinc-200'
@@ -691,7 +691,7 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
         /* EXPANDED COMPACT CAD TOOL DOCK (WITH HORIZONTAL FLYOUT SHELVES EXPANDING TO THE RIGHT) */
         <div
           id="mody-left-toolbar-dock"
-          className={`relative w-[164px] sm:w-[172px] p-2 rounded-2xl border shadow-xl flex flex-col gap-1.5 transition-all select-none ${
+          className={`relative w-[164px] sm:w-[172px] p-2 rounded-2xl border flex flex-col gap-1.5 select-none ${
             theme === 'light'
               ? 'bg-white border-neutral-200 text-neutral-800'
               : 'bg-[#18191d] border-[#2b2c32] text-[#e2e4ea]'
@@ -1421,7 +1421,7 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
           {showPrimitivesMenu && (
             <div
               id="mody-primitives-flyout-menu"
-              className={`absolute left-full top-0 ml-2.5 w-52 p-2.5 rounded-2xl border shadow-xl z-50 flex flex-col gap-1.5 text-xs select-none ${
+              className={`absolute left-full top-0 ml-2.5 w-52 p-2.5 rounded-2xl border z-50 flex flex-col gap-1.5 text-xs select-none ${
                 theme === 'light'
                   ? 'bg-white border-neutral-200 text-neutral-800'
                   : 'bg-[#18191d] border-[#2b2c32] text-zinc-200'
@@ -1475,7 +1475,7 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
           {showBrushShelf && (
             <div
               id="mody-brush-shelf-flyout"
-              className={`absolute left-full top-0 ml-2.5 w-64 sm:w-72 p-3 rounded-2xl border shadow-xl z-50 flex flex-col gap-2.5 text-xs select-none ${
+              className={`absolute left-full top-0 ml-2.5 w-64 sm:w-72 p-3 rounded-2xl border z-50 flex flex-col gap-2.5 text-xs select-none ${
                 theme === 'light'
                   ? 'bg-white border-neutral-200 text-neutral-800'
                   : 'bg-[#18191d] border-[#2b2c32] text-zinc-200'
@@ -1660,7 +1660,7 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
           {showSceneShelf && (
             <div
               id="mody-scene-shelf-flyout"
-              className={`absolute left-full top-0 ml-2.5 w-64 sm:w-72 p-3 rounded-2xl border shadow-xl z-50 flex flex-col gap-2.5 text-xs select-none ${
+              className={`absolute left-full top-0 ml-2.5 w-64 sm:w-72 p-3 rounded-2xl border z-50 flex flex-col gap-2.5 text-xs select-none ${
                 theme === 'light'
                   ? 'bg-white border-neutral-200 text-neutral-800'
                   : 'bg-[#18191d] border-[#2b2c32] text-zinc-200'
@@ -2021,7 +2021,7 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
           {showSettingsShelf && (
             <div
               id="mody-settings-shelf-flyout"
-              className={`absolute left-full top-0 ml-2.5 w-60 sm:w-64 p-3 rounded-2xl border shadow-xl z-50 flex flex-col gap-2.5 text-xs select-none ${
+              className={`absolute left-full top-0 ml-2.5 w-60 sm:w-64 p-3 rounded-2xl border z-50 flex flex-col gap-2.5 text-xs select-none ${
                 theme === 'light'
                   ? 'bg-white border-neutral-200 text-neutral-800'
                   : 'bg-[#18191d] border-[#2b2c32] text-zinc-200'

@@ -64,7 +64,7 @@ interface ViewportProps {
   onStylusDetected?: (detected: boolean) => void;
 }
 
-export const Viewport: React.FC<ViewportProps> = ({
+const ViewportComponent: React.FC<ViewportProps> = ({
   tool,
   onSelectTool,
   brushSettings,
@@ -1278,3 +1278,5 @@ export const Viewport: React.FC<ViewportProps> = ({
     </div>
   );
 };
+
+export const Viewport = React.memo(ViewportComponent);
