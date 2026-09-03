@@ -10,6 +10,7 @@ import {
   NumpadTarget,
 } from '../types';
 import { StudioEngine } from '../core/studioEngine';
+import { recordInputTelemetry } from '../core/telemetryStore';
 import { StylusRadialMenu, RadialMenuPosition } from './StylusRadialMenu';
 import {
   RotateCw,
@@ -673,6 +674,15 @@ export const Viewport: React.FC<ViewportProps> = ({
     const engine = engineRef.current;
     if (!engine) return;
 
+    const startT = performance.now();
+    const queueLag = Math.max(0, startT - e.timeStamp);
+    const coalescedCount = (e.nativeEvent as any)?.getCoalescedEvents?.()?.length || 1;
+
+    const finishMoveTelemetry = () => {
+      const processMs = performance.now() - startT;
+      recordInputTelemetry(queueLag, processMs, coalescedCount, e.pointerType);
+    };
+
     // Track 2D screen coordinates for cursor reticle preview and visual ruler overlay
     setCursorPos({ x: e.clientX, y: e.clientY, visible: true });
     if (rulerDrag?.active) {
@@ -754,6 +764,7 @@ export const Viewport: React.FC<ViewportProps> = ({
         // Stylus Hover Decal Tracking
         engine.updateCursor(coords.x, coords.y, brushSettings.size, brushSettings, tool);
       }
+      finishMoveTelemetry();
       return;
     }
 
@@ -768,6 +779,7 @@ export const Viewport: React.FC<ViewportProps> = ({
         activePenIdRef.current !== null ||
         (now - lastPenEventTimeRef.current < 500)
       ) {
+        finishMoveTelemetry();
         return;
       }
 
@@ -792,12 +804,16 @@ export const Viewport: React.FC<ViewportProps> = ({
           lastToastFovRef.current = newFov;
           showGestureToast(`Camera FOV: ${newFov}°`, getFovDescription(newFov));
         }
+        finishMoveTelemetry();
         return;
       }
 
       // 2-Finger Multi-Touch: Pinch-Zoom & Pan
       if (touchCount === 2) {
-        if (!readTouchPair()) return;
+        if (!readTouchPair()) {
+          finishMoveTelemetry();
+          return;
+        }
         const [p0, p1] = touchPairScratch.current;
         const dist = Math.hypot(p1.x - p0.x, p1.y - p0.y);
         const midX = (p0.x + p1.x) / 2;
@@ -817,6 +833,7 @@ export const Viewport: React.FC<ViewportProps> = ({
         } else {
           lastTouchMidpointRef.current = { x: midX, y: midY };
         }
+        finishMoveTelemetry();
         return;
       }
 
@@ -841,6 +858,7 @@ export const Viewport: React.FC<ViewportProps> = ({
           lastPointerPos.current.y = e.clientY;
         }
       }
+      finishMoveTelemetry();
       return;
     }
 
@@ -865,6 +883,7 @@ export const Viewport: React.FC<ViewportProps> = ({
 
         lastPointerPos.current.x = e.clientX;
         lastPointerPos.current.y = e.clientY;
+        finishMoveTelemetry();
         return;
       }
 
@@ -885,6 +904,7 @@ export const Viewport: React.FC<ViewportProps> = ({
       } else {
         engine.updateCursor(coords.x, coords.y, brushSettings.size, brushSettings, tool);
       }
+      finishMoveTelemetry();
     }
   };
 

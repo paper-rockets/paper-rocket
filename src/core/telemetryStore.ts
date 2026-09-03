@@ -64,7 +64,92 @@ export function subscribeCameraPose(listener: Listener): () => void {
   };
 }
 
-// --- Frame rate ---------------------------------------------------------
+// --- Frame rate & Input Lag Telemetry -----------------------------------
+
+export interface InputTelemetry {
+  /** Input queue delay in ms: performance.now() - event.timeStamp */
+  inputLagMs: number;
+  /** JavaScript stroke computation & geometry update time in ms */
+  strokeProcessMs: number;
+  /** Current frame duration in ms */
+  frameTimeMs: number;
+  /** Estimated total event-to-render latency in ms */
+  eventToRenderMs: number;
+  /** Number of coalesced sub-pixel hardware samples */
+  coalescedCount: number;
+  /** Active pointer device: 'pen' | 'touch' | 'mouse' */
+  pointerType: string;
+  /** Peak input lag recorded (ms) */
+  peakLagMs: number;
+  /** Recent history for sparkline graph (fixed 32 points) */
+  history: number[];
+}
+
+const inputTelemetry: InputTelemetry = {
+  inputLagMs: 0,
+  strokeProcessMs: 0,
+  frameTimeMs: 16.6,
+  eventToRenderMs: 0,
+  coalescedCount: 1,
+  pointerType: 'mouse',
+  peakLagMs: 0,
+  history: new Array(32).fill(0),
+};
+
+const inputListeners = new Set<Listener>();
+let lastInputNotifyTime = 0;
+
+/** Throttled input telemetry publisher (max 15Hz to keep React overhead at 0) */
+export function recordInputTelemetry(
+  queueLagMs: number,
+  processMs: number,
+  coalesced: number = 1,
+  pointerType: string = 'mouse'
+): void {
+  const cleanQueueLag = Math.min(500, Math.max(0, queueLagMs));
+  const cleanProcess = Math.min(200, Math.max(0, processMs));
+  
+  inputTelemetry.inputLagMs = cleanQueueLag;
+  inputTelemetry.strokeProcessMs = cleanProcess;
+  inputTelemetry.eventToRenderMs = cleanQueueLag + cleanProcess + (inputTelemetry.frameTimeMs * 0.5);
+  inputTelemetry.coalescedCount = Math.max(1, coalesced);
+  inputTelemetry.pointerType = pointerType;
+
+  if (cleanQueueLag > inputTelemetry.peakLagMs) {
+    inputTelemetry.peakLagMs = cleanQueueLag;
+  }
+
+  // Push to circular history
+  inputTelemetry.history.shift();
+  inputTelemetry.history.push(cleanQueueLag);
+
+  const now = performance.now();
+  if (now - lastInputNotifyTime > 66) { // ~15 FPS UI update
+    lastInputNotifyTime = now;
+    notify(inputListeners);
+  }
+}
+
+export function recordFrameDuration(durationMs: number): void {
+  inputTelemetry.frameTimeMs = Math.max(1, durationMs);
+}
+
+export function resetPeakLag(): void {
+  inputTelemetry.peakLagMs = 0;
+  inputTelemetry.history.fill(0);
+  notify(inputListeners);
+}
+
+export function getInputTelemetry(): Readonly<InputTelemetry> {
+  return inputTelemetry;
+}
+
+export function subscribeInputTelemetry(listener: Listener): () => void {
+  inputListeners.add(listener);
+  return () => {
+    inputListeners.delete(listener);
+  };
+}
 
 /** Called roughly twice a second by the engine's FPS sampler. */
 export function publishFps(value: number): void {
@@ -83,3 +168,4 @@ export function subscribeFps(listener: Listener): () => void {
     fpsListeners.delete(listener);
   };
 }
+
