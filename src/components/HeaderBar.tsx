@@ -4,6 +4,7 @@ import {
   GizmoMode,
   ActiveControllerType,
   ModelDisplayMode,
+  WorkspaceMode,
 } from '../types';
 import {
   FolderArchive,
@@ -89,6 +90,8 @@ interface HeaderBarProps {
   onOpenMobileConnect?: () => void;
   onOpenMatCapStudio?: () => void;
   onOpenSandbox?: () => void;
+  workspaceMode?: WorkspaceMode;
+  onToggleWorkspaceMode?: () => void;
 }
 
 export const HeaderBarComponent: React.FC<HeaderBarProps> = ({
@@ -133,6 +136,8 @@ export const HeaderBarComponent: React.FC<HeaderBarProps> = ({
   onCloneModel,
   onOpenModelDisplay,
   onOpenMatCapStudio,
+  workspaceMode = 'play',
+  onToggleWorkspaceMode,
 }) => {
   const [showHelpModal, setShowHelpModal] = useState(false);
 
@@ -143,6 +148,26 @@ export const HeaderBarComponent: React.FC<HeaderBarProps> = ({
         id="sketchbook-header-capsule"
         className="flex items-center gap-0.5 sm:gap-1.5 px-1.5 sm:px-3 py-1 sm:py-1.5 rounded-2xl bg-[#18191d]/95 backdrop-blur-xl border border-[#2b2c32] text-[#e2e4ea] shadow-2xl transition-all overflow-x-auto scrollbar-none max-w-full text-xs"
       >
+        {/* 0. PRO / PLAY WORKSPACE TOGGLE */}
+        {onToggleWorkspaceMode && (
+          <button
+            id="header-btn-workspace-mode"
+            onClick={onToggleWorkspaceMode}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl font-bold text-[11px] transition-all shrink-0 cursor-pointer shadow-sm ${
+              workspaceMode === 'play'
+                ? 'bg-gradient-to-r from-emerald-500 to-teal-400 text-neutral-950 shadow-emerald-500/20'
+                : 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-purple-500/20'
+            }`}
+            title={
+              workspaceMode === 'play'
+                ? 'Currently in PLAY Mode (Tactile Creative Canvas). Click to switch to PRO Mode.'
+                : 'Currently in PRO Mode (Full CAD Engineering Suite). Click to switch to PLAY Mode.'
+            }
+          >
+            <Sparkles className="w-3.5 h-3.5 shrink-0" />
+            <span>{workspaceMode === 'play' ? 'PLAY' : 'PRO'}</span>
+          </button>
+        )}
         {/* 1. BRUSH PICKER */}
         {onOpenBrushPicker && (
           <button

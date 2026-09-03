@@ -12,7 +12,6 @@ import {
   Battery,
   Sparkles,
   Sliders,
-  Monitor,
 } from 'lucide-react';
 import { isFullscreen, toggleFullscreen, subscribeFullscreenChange, isStandalonePWA } from '../../utils/fullscreen';
 
@@ -265,28 +264,8 @@ export const DeviceSimulatorWrapper: React.FC<DeviceSimulatorWrapperProps> = ({
 
   if (device === 'fullscreen') {
     return (
-      <div className="w-screen h-screen overflow-hidden select-none bg-black relative group">
+      <div className="w-screen h-screen overflow-hidden select-none bg-black relative">
         <App />
-        {/* Floating Quick Action Badge in Direct View */}
-        <div className="fixed top-2.5 right-2.5 z-50 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity bg-[#14151a]/80 hover:bg-[#14151a]/95 backdrop-blur-md border border-neutral-800 p-1 rounded-xl shadow-xl">
-          <button
-            type="button"
-            onClick={() => toggleFullscreen()}
-            className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition-colors"
-            title={isBrowserFs ? 'Exit Browser Fullscreen (Esc)' : 'Enter Browser Fullscreen (F11)'}
-          >
-            {isBrowserFs ? <Minimize className="w-4 h-4 text-amber-400" /> : <Maximize className="w-4 h-4 text-sky-400" />}
-          </button>
-          <button
-            type="button"
-            onClick={() => setDevice('s6lite')}
-            className="px-2 py-1 rounded-lg text-[11px] font-medium text-neutral-300 hover:text-white hover:bg-white/10 flex items-center gap-1 transition-colors"
-            title="Return to Device Emulator"
-          >
-            <Monitor className="w-3.5 h-3.5 text-purple-400" />
-            <span>Emulator</span>
-          </button>
-        </div>
       </div>
     );
   }

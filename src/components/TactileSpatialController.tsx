@@ -103,34 +103,7 @@ export const TactileSpatialController: React.FC<TactileSpatialControllerProps> =
     clampBounds: true,
   });
 
-  // Long-press detection for hidden settings panel
-  const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const longPressStartPos = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
-  const startLongPressDetection = (e: React.PointerEvent) => {
-    longPressStartPos.current = { x: e.clientX, y: e.clientY };
-    if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
-
-    longPressTimerRef.current = setTimeout(() => {
-      playHapticSound('snap', soundEnabled);
-      setShowHiddenPhysicsPanel(true);
-      setShowMenu(false);
-      longPressTimerRef.current = null;
-    }, 650);
-  };
-
-  const cancelLongPressDetection = (e?: React.PointerEvent) => {
-    if (e && longPressStartPos.current) {
-      const dist = Math.hypot(e.clientX - longPressStartPos.current.x, e.clientY - longPressStartPos.current.y);
-      if (dist > 8 && longPressTimerRef.current) {
-        clearTimeout(longPressTimerRef.current);
-        longPressTimerRef.current = null;
-      }
-    } else if (longPressTimerRef.current) {
-      clearTimeout(longPressTimerRef.current);
-      longPressTimerRef.current = null;
-    }
-  };
 
   // Velocity-based visual vibration state (simulates mechanical haptic resistance via CSS transforms)
   const [vibration, setVibration] = useState<{ x: number; y: number; rot: number }>({ x: 0, y: 0, rot: 0 });
@@ -652,23 +625,11 @@ export const TactileSpatialController: React.FC<TactileSpatialControllerProps> =
         </button>
       </div>
 
-      {/* Main Paper Rocket-Inspired Tactile Circular Disc with Long-Press Detection */}
+      {/* Main Feather-Inspired Tactile Circular Disc */}
       <motion.div
-        id="paper-rocket-circular-wheel"
+        id="feather-circular-wheel"
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        onPointerDown={(e) => {
-          startLongPressDetection(e);
-        }}
-        onPointerMove={(e) => {
-          cancelLongPressDetection(e);
-        }}
-        onPointerUp={() => {
-          cancelLongPressDetection();
-        }}
-        onPointerCancel={() => {
-          cancelLongPressDetection();
-        }}
         className={`relative ${wheelSizeClass} rounded-full bg-[#18181b]/95 backdrop-blur-2xl border border-neutral-800 shadow-[0_25px_60px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.1)] flex items-center justify-center touch-none overflow-hidden transition-all duration-200`}
       >
         {/* Inner Surface with Velocity-Based CSS Vibration */}

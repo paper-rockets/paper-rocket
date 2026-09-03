@@ -17,6 +17,7 @@ import {
   Guide3D,
   ActiveControllerType,
   ProjectSaveData,
+  WorkspaceMode,
 } from './types';
 import { StudioEngine } from './core/studioEngine';
 import { Viewport } from './components/Viewport';
@@ -125,6 +126,9 @@ const DEFAULT_BRUSH_SETTINGS: BrushSettings = {
   smoothingStrength: 0.55,
   materialType: 'shadeless',
   profile: 'ribbon',
+  workspaceMode: 'play',
+  superZapMode: true,
+  eraserMode: 'vacuum',
   patternType: 'none',
   patternScale: 4.0,
   patternIntensity: 1.0,
@@ -246,6 +250,25 @@ export default function App() {
     try {
       localStorage.setItem('mody_global_ui_scale', clamped.toString());
     } catch (_) {}
+  }, []);
+
+  // Workspace Mode: 'play' (curated, tactile, streamlined) vs 'pro' (full CAD engineering)
+  const [workspaceMode, setWorkspaceMode] = useState<WorkspaceMode>(() => {
+    try {
+      const saved = localStorage.getItem('mody_workspace_mode');
+      if (saved === 'pro' || saved === 'play') return saved;
+    } catch (_) {}
+    return 'play';
+  });
+
+  const handleToggleWorkspaceMode = useCallback(() => {
+    setWorkspaceMode((prev) => {
+      const next: WorkspaceMode = prev === 'play' ? 'pro' : 'play';
+      try {
+        localStorage.setItem('mody_workspace_mode', next);
+      } catch (_) {}
+      return next;
+    });
   }, []);
 
   const [perfectView, setPerfectView] = useState<PerfectViewInfo>({
@@ -822,7 +845,7 @@ export default function App() {
   return (
     <div
       className={`relative w-full h-full overflow-hidden select-none transition-colors duration-200 ${
-        theme === 'light' ? 'bg-[#f6f7f9] text-neutral-800' : 'bg-[#0c0e14] text-neutral-100'
+        theme === 'light' ? 'bg-[#ffffff] text-neutral-800' : 'bg-[#0c0e14] text-neutral-100'
       }`}
     >
       {/* Main 3D Viewport */}
@@ -955,6 +978,8 @@ export default function App() {
         onLoadProject={handleLoadProject}
         onToggleTheme={handleToggleTheme}
         onSetTheme={handleSetTheme}
+        workspaceMode={workspaceMode}
+        onToggleWorkspaceMode={handleToggleWorkspaceMode}
         onOpenSandbox={() => setShowSandbox(true)}
       />
 
@@ -1138,6 +1163,10 @@ export default function App() {
             setSettings={setPostSettings}
             onClose={() => setIsRenderSettingsOpen(false)}
             onRecalculateNormals={() => engine?.recalculateMeshNormals()}
+            onOpenShaderStudio={() => {
+              setIsRenderSettingsOpen(false);
+              setIsColorStudioOpen(true);
+            }}
             gpuInfo={gpuInfo}
           />
         </Suspense>

@@ -44,6 +44,7 @@ export const ModelLibraryModal: React.FC<ModelLibraryModalProps> = ({
 
   const categories = [
     { id: 'All', label: 'All Models', icon: Layers },
+    { id: 'Toybox', label: '3D Toybox / Coloring Book', icon: Sparkles },
     { id: 'Anime & Manga', label: 'Anime & Manga', icon: Sparkles },
     { id: 'Characters & Figures', label: 'Characters', icon: Flame },
     { id: 'Houses & Architecture', label: 'Houses & Places', icon: Home },
@@ -54,7 +55,11 @@ export const ModelLibraryModal: React.FC<ModelLibraryModalProps> = ({
 
   const filteredPresets = useMemo(() => {
     return presets.filter((p) => {
-      const matchesCat = selectedCategory === 'All' || p.category === selectedCategory;
+      const matchesCat =
+        selectedCategory === 'All' ||
+        (selectedCategory === 'Toybox'
+          ? ['Anime & Manga', 'Characters & Figures', 'Animals & Creatures', 'Shapes & Benchmarks'].includes(p.category)
+          : p.category === selectedCategory);
       const matchesSearch =
         searchQuery.trim() === '' ||
         p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

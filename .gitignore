@@ -12,3 +12,5 @@ dist-apk/
 crates/**/target/
 scripts/
 .claude/
+shaders/
+dist-all/

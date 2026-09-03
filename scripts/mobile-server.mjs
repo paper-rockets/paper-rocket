@@ -43,6 +43,7 @@ async function startMobileServer() {
       server: {
         host: '0.0.0.0',
         port: requestedPort,
+        strictPort: false,
         https: isHttps ? {} : false,
         cors: true,
       },
@@ -50,7 +51,8 @@ async function startMobileServer() {
 
     await server.listen();
 
-    const actualPort = server.config.server.port || requestedPort;
+    const address = server.httpServer?.address();
+    const actualPort = (typeof address === 'object' && address?.port) || server.config.server.port || requestedPort;
     const protocol = isHttps ? 'https' : 'http';
     const localIps = getLocalIpAddresses();
     const primaryIp = localIps.length > 0 ? localIps[0].address : 'localhost';

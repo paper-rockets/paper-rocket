@@ -22,6 +22,7 @@ import {
   BrushSettings,
   ToolType,
   MaterialType,
+  MagicFxShaderPreset,
 } from '../types';
 import {
   CURATED_PAINT_PALETTES,
@@ -30,6 +31,8 @@ import {
   addRecentPaintColor,
   applyPaintPresetToSettings,
 } from '../presets/paintPresets';
+import { CANDY_CYBER_PALETTE } from '../presets/candyCyberPalette';
+import { MAGIC_FX_PRESETS, applyMagicFxToBrushSettings } from '../presets/magicFxPresets';
 import { normalizeHexColor } from '../core/materialCache';
 import {
   hexToRgb,
@@ -65,12 +68,19 @@ export const PaintPickerModal: React.FC<PaintPickerModalProps> = ({
   theme = 'dark',
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>('wheel');
+  const [viewMode, setViewMode] = useState<'play' | 'pro'>(brushSettings.workspaceMode || 'play');
   const [recentColors, setRecentColors] = useState<string[]>([]);
   const [selectedPaletteId, setSelectedPaletteId] = useState<string>('cyberpunk');
   const [copiedHex, setCopiedHex] = useState<boolean>(false);
   const [feedbackToast, setFeedbackToast] = useState<string | null>(null);
 
   const nativeColorInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (brushSettings.workspaceMode) {
+      setViewMode(brushSettings.workspaceMode);
+    }
+  }, [brushSettings.workspaceMode]);
 
   useEffect(() => {
     if (isOpen) {
@@ -92,6 +102,28 @@ export const PaintPickerModal: React.FC<PaintPickerModalProps> = ({
     setBrushSettings((prev) => ({ ...prev, color: valid }));
     const updated = addRecentPaintColor(valid);
     setRecentColors(updated);
+  };
+
+  const handleModeChange = (mode: 'play' | 'pro') => {
+    setViewMode(mode);
+    setBrushSettings((prev) => ({ ...prev, workspaceMode: mode }));
+  };
+
+  const handleSelectCandyCyberColor = (hex: string, name: string) => {
+    handleSelectColor(hex);
+    setFeedbackToast(`Selected swatch: ${name} (${hex})`);
+    setTimeout(() => setFeedbackToast(null), 2500);
+  };
+
+  const handleSelectMagicFx = (fxId: MagicFxShaderPreset, name: string) => {
+    setBrushSettings((prev) => applyMagicFxToBrushSettings(fxId, prev));
+    const targetFx = MAGIC_FX_PRESETS.find((p) => p.id === fxId);
+    if (targetFx) {
+      const updated = addRecentPaintColor(targetFx.color);
+      setRecentColors(updated);
+    }
+    setFeedbackToast(`Activated Magic FX: ${name}`);
+    setTimeout(() => setFeedbackToast(null), 2500);
   };
 
   const handleCopyHex = () => {
@@ -140,7 +172,9 @@ export const PaintPickerModal: React.FC<PaintPickerModalProps> = ({
             />
             <div>
               <h2 className="text-sm font-semibold text-white tracking-wide">3D Paint & Material Picker</h2>
-              <p className="text-[11px] text-neutral-400">PBR Finishes, OKLab Pigments & Surface Sampler</p>
+              <p className="text-[11px] text-neutral-400">
+                {viewMode === 'play' ? 'Candy & Cyber Swatches & Magic FX' : 'PBR Finishes, OKLab Pigments & Surface Sampler'}
+              </p>
             </div>
           </div>
 
@@ -156,39 +190,71 @@ export const PaintPickerModal: React.FC<PaintPickerModalProps> = ({
           </div>
         </div>
 
-        {/* Quick Material Pipeline Switcher */}
-        <div className="px-4 pt-3 pb-1 border-b border-neutral-800/60 bg-neutral-950/30">
-          <div className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-            <Palette className="w-3 h-3 text-neutral-300" />
-            <span>Material Shader Mode</span>
-          </div>
-          <div className="grid grid-cols-4 gap-1.5">
-            {[
-              { id: 'shadeless' as MaterialType, label: 'Flat Paint', icon: Palette },
-              { id: 'shaded' as MaterialType, label: 'PBR Lit', icon: Zap },
-              { id: 'glow' as MaterialType, label: 'Glow', icon: Flame },
-              { id: 'cutout' as MaterialType, label: 'Cutout', icon: Scissors },
-            ].map((mat) => {
-              const Icon = mat.icon;
-              const isSelected = (brushSettings.materialType || 'shaded') === mat.id;
-              return (
-                <button
-                  key={mat.id}
-                  type="button"
-                  onClick={() => setBrushSettings((prev) => ({ ...prev, materialType: mat.id }))}
-                  className={`py-1.5 px-2 rounded-xl border text-[11px] font-medium flex items-center justify-center gap-1.5 transition-all ${
-                    isSelected
-                      ? 'bg-white text-zinc-950 font-bold border-white shadow-sm'
-                      : 'bg-neutral-900 border-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-800'
-                  }`}
-                >
-                  <Icon className="w-3.5 h-3.5 shrink-0" />
-                  <span>{mat.label}</span>
-                </button>
-              );
-            })}
+        {/* Mode Segmented Switcher (Play vs Pro) */}
+        <div className="px-4 py-2 border-b border-neutral-800/60 bg-neutral-950/50">
+          <div className="flex items-center p-1 bg-neutral-900/90 rounded-xl border border-neutral-800">
+            <button
+              type="button"
+              onClick={() => handleModeChange('play')}
+              className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
+                viewMode === 'play'
+                  ? 'bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-cyan-500/20 text-white border border-pink-500/40 shadow-sm'
+                  : 'text-neutral-400 hover:text-white border border-transparent'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-pink-400" />
+              <span>Play Studio</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleModeChange('pro')}
+              className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
+                viewMode === 'pro'
+                  ? 'bg-neutral-800 text-white border border-neutral-700 shadow-sm'
+                  : 'text-neutral-400 hover:text-white border border-transparent'
+              }`}
+            >
+              <Sliders className="w-3.5 h-3.5 text-sky-400" />
+              <span>Pro Color Studio</span>
+            </button>
           </div>
         </div>
+
+        {/* Quick Material Pipeline Switcher (Pro Mode) */}
+        {viewMode === 'pro' && (
+          <div className="px-4 pt-3 pb-1 border-b border-neutral-800/60 bg-neutral-950/30">
+            <div className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+              <Palette className="w-3 h-3 text-neutral-300" />
+              <span>Material Shader Mode</span>
+            </div>
+            <div className="grid grid-cols-4 gap-1.5">
+              {[
+                { id: 'shadeless' as MaterialType, label: 'Flat Paint', icon: Palette },
+                { id: 'shaded' as MaterialType, label: 'PBR Lit', icon: Zap },
+                { id: 'glow' as MaterialType, label: 'Glow', icon: Flame },
+                { id: 'cutout' as MaterialType, label: 'Cutout', icon: Scissors },
+              ].map((mat) => {
+                const Icon = mat.icon;
+                const isSelected = (brushSettings.materialType || 'shaded') === mat.id;
+                return (
+                  <button
+                    key={mat.id}
+                    type="button"
+                    onClick={() => setBrushSettings((prev) => ({ ...prev, materialType: mat.id }))}
+                    className={`py-1.5 px-2 rounded-xl border text-[11px] font-medium flex items-center justify-center gap-1.5 transition-all ${
+                      isSelected
+                        ? 'bg-white text-zinc-950 font-bold border-white shadow-sm'
+                        : 'bg-neutral-900 border-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-800'
+                    }`}
+                  >
+                    <Icon className="w-3.5 h-3.5 shrink-0" />
+                    <span>{mat.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Main Content Area */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -218,8 +284,217 @@ export const PaintPickerModal: React.FC<PaintPickerModalProps> = ({
             </button>
           </div>
 
-          {/* Navigation Tabs */}
-          <div className="flex items-center gap-1 p-1 rounded-xl bg-neutral-950 border border-neutral-800/80">
+          {/* PLAY MODE VIEW */}
+          {viewMode === 'play' && (
+            <div className="space-y-4">
+              {/* Color Preview Bar & Hex Readout */}
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-neutral-950 border border-neutral-800">
+                <div
+                  className="w-10 h-10 rounded-xl border border-white/20 shadow-md shrink-0 cursor-pointer relative group overflow-hidden"
+                  style={{ backgroundColor: currentHex }}
+                  onClick={() => nativeColorInputRef.current?.click()}
+                  title="Click for Native Color Picker"
+                >
+                  <input
+                    ref={nativeColorInputRef}
+                    type="color"
+                    value={currentHex}
+                    onChange={(e) => handleSelectColor(e.target.value)}
+                    className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
+                  />
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-0.5">
+                    <span className="font-mono text-sm font-semibold text-white tracking-wider uppercase">
+                      {currentHex}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleCopyHex}
+                      className="p-1 text-neutral-400 hover:text-white transition-colors"
+                      title="Copy Hex"
+                    >
+                      {copiedHex ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-2 text-[10px] font-mono text-neutral-400">
+                    <span>RGB({rgb.r}, {rgb.g}, {rgb.b})</span>
+                    <span>•</span>
+                    <span className="capitalize">{brushSettings.materialType || 'shaded'}</span>
+                    {brushSettings.emissiveIntensity > 0 && (
+                      <>
+                        <span>•</span>
+                        <span className="text-amber-400 font-bold">Glow {brushSettings.emissiveIntensity.toFixed(1)}x</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Candy & Cyber 16-Color Swatches */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <Palette className="w-3.5 h-3.5 text-pink-400" />
+                    <span className="text-xs font-semibold text-white tracking-wide uppercase">Candy & Cyber Swatches</span>
+                  </div>
+                  <span className="text-[10px] text-neutral-400">16 Vibrant Colors</span>
+                </div>
+
+                <div className="grid grid-cols-4 gap-2">
+                  {CANDY_CYBER_PALETTE.map((swatch) => {
+                    const isSelected = currentHex.toLowerCase() === swatch.hex.toLowerCase();
+                    return (
+                      <button
+                        key={swatch.hex}
+                        type="button"
+                        onClick={() => handleSelectCandyCyberColor(swatch.hex, swatch.name)}
+                        className={`group relative p-2 rounded-xl border text-left transition-all flex flex-col gap-1.5 ${
+                          isSelected
+                            ? 'border-white bg-white/10 ring-2 ring-white/50 shadow-md scale-[1.02]'
+                            : 'border-neutral-800/80 bg-neutral-950/60 hover:border-neutral-700 hover:bg-neutral-900/60'
+                        }`}
+                        title={`${swatch.name} (${swatch.hex})`}
+                      >
+                        <div
+                          className="w-full h-8 rounded-lg border border-white/20 shadow-inner flex items-center justify-center relative overflow-hidden"
+                          style={{ backgroundColor: swatch.hex }}
+                        >
+                          {isSelected && (
+                            <Check className="w-4 h-4 text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]" />
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-[11px] font-medium text-neutral-200 truncate group-hover:text-white leading-tight">
+                            {swatch.name}
+                          </div>
+                          <div className="text-[9px] font-mono text-neutral-400 leading-tight uppercase">
+                            {swatch.hex}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 6 Magic FX Tiles */}
+              <div className="space-y-2 pt-2 border-t border-neutral-800/80">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                    <span className="text-xs font-semibold text-white tracking-wide uppercase">Magic FX Shaders</span>
+                  </div>
+                  <span className="text-[10px] text-neutral-400">One-Tap Shader Activation</span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {MAGIC_FX_PRESETS.map((fx) => {
+                    const isSelected =
+                      brushSettings.magicFx === fx.id ||
+                      (brushSettings.materialType === fx.materialType &&
+                        (fx.materialType !== 'animated_fx' || brushSettings.shaderEffect === fx.shaderEffect) &&
+                        currentHex.toLowerCase() === fx.color.toLowerCase());
+
+                    return (
+                      <button
+                        key={fx.id}
+                        type="button"
+                        onClick={() => handleSelectMagicFx(fx.id, fx.name)}
+                        className={`group relative p-3 rounded-xl border text-left transition-all flex flex-col justify-between gap-2 overflow-hidden ${
+                          isSelected
+                            ? 'border-purple-400 bg-purple-950/40 ring-2 ring-purple-500/40 shadow-lg'
+                            : 'border-neutral-800/80 bg-neutral-950/60 hover:border-neutral-700 hover:bg-neutral-900/60'
+                        }`}
+                        title={`${fx.name} - ${fx.tagline}`}
+                      >
+                        <div
+                          className="absolute -top-6 -right-6 w-14 h-14 rounded-full blur-xl pointer-events-none opacity-25"
+                          style={{ backgroundColor: fx.color }}
+                        />
+
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="w-3.5 h-3.5 rounded-full border border-white/40 shrink-0 shadow-sm"
+                              style={{ backgroundColor: fx.color }}
+                            />
+                            <span className="text-xs font-semibold text-white group-hover:text-purple-200 transition-colors">
+                              {fx.name}
+                            </span>
+                          </div>
+                          {isSelected && (
+                            <div className="p-0.5 rounded-full bg-purple-500 text-black">
+                              <Check className="w-3 h-3" />
+                            </div>
+                          )}
+                        </div>
+
+                        <p className="text-[10px] text-neutral-400 group-hover:text-neutral-300 leading-snug line-clamp-2">
+                          {fx.tagline}
+                        </p>
+
+                        <div className="flex items-center justify-between pt-1 border-t border-neutral-800/60 text-[9px] font-mono text-neutral-400">
+                          <span className="capitalize">{fx.materialType.replace('_', ' ')}</span>
+                          {fx.emissiveIntensity > 0 && (
+                            <span className="text-amber-400 font-bold">{fx.emissiveIntensity.toFixed(1)}x</span>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Recent Colors */}
+              {recentColors.length > 0 && (
+                <div className="space-y-1.5 pt-2 border-t border-neutral-800/80">
+                  <span className="text-[11px] font-semibold text-neutral-400 block">Recent Colors</span>
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+                    {recentColors.map((hex, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => handleSelectColor(hex)}
+                        className="w-7 h-7 rounded-lg border border-white/20 hover:scale-110 transition-transform shrink-0"
+                        style={{ backgroundColor: hex }}
+                        title={hex}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Switch to Pro Mode Button / Color Studio */}
+              <div className="pt-2 border-t border-neutral-800/80 flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleModeChange('pro')}
+                  className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-neutral-900 to-neutral-800 hover:from-neutral-800 hover:to-neutral-700 border border-neutral-700 text-xs font-semibold text-neutral-200 hover:text-white transition-all flex items-center justify-center gap-2 shadow-sm"
+                >
+                  <Sliders className="w-4 h-4 text-sky-400" />
+                  <span>Switch to Pro Color Studio (Gamut, PBR Finishes & OKLab)</span>
+                </button>
+                {onOpenColorStudio && (
+                  <button
+                    type="button"
+                    onClick={onOpenColorStudio}
+                    className="w-full py-2 px-3 rounded-xl bg-neutral-950 hover:bg-neutral-900 border border-neutral-800 text-[11px] text-neutral-400 hover:text-sky-300 transition-colors flex items-center justify-center gap-1.5"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-sky-400" />
+                    <span>Open Full Floating Color Studio</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* PRO MODE VIEW */}
+          {viewMode === 'pro' && (
+            <div className="space-y-4">
+              {/* Navigation Tabs */}
+              <div className="flex items-center gap-1 p-1 rounded-xl bg-neutral-950 border border-neutral-800/80">
             <button
             type="button"
             onClick={() => setActiveTab('wheel')}
@@ -646,6 +921,20 @@ export const PaintPickerModal: React.FC<PaintPickerModalProps> = ({
             )}
           </div>
         )}
+
+              {/* Button to Switch Back to Play Mode */}
+              <div className="pt-2 border-t border-neutral-800/80">
+                <button
+                  type="button"
+                  onClick={() => handleModeChange('play')}
+                  className="w-full py-2 px-3 rounded-xl bg-neutral-950 hover:bg-neutral-900 border border-neutral-800 text-xs text-neutral-400 hover:text-white transition-all flex items-center justify-center gap-1.5"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-pink-400" />
+                  <span>Back to Play Studio (16 Candy Swatches & Magic FX)</span>
+                </button>
+              </div>
+            </div>
+          )}
       </div>
 
         {/* Footer Toast feedback */}

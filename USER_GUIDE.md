@@ -1,684 +1,601 @@
-# Remix 3D Model Painting Studio & Draco Compression Suite
-## Comprehensive User Guide & Workstation Manual
+# Remix 3D Studio: Artist Workstation Manual & User Guide
 
-> **Version**: `v14.0.0`  
-> **Workspace**: `e:\X\AiStudio Workflow`  
-> **Primary Suite**: [v14](file:///e:/X/AiStudio%20Workflow/v14)  
-> **Technology Stack**: React 19, Three.js (r185), WebGPU / WebGL2, `three-mesh-bvh`, Google Draco WASM, Web Audio API, Web Vibration API, Tailwind CSS v4
-
----
-
-## Table of Contents
-
-1. [Executive Overview](#1-executive-overview)
-2. [System Requirements & Quick Start](#2-system-requirements--quick-start)
-   - [Hardware & Browser Support](#hardware--browser-support)
-   - [Launching the Flagship Studio (v14)](#launching-the-flagship-studio-v14)
-   - [Launching Mobile & Tablet LAN Sessions](#launching-mobile--tablet-lan-sessions)
-   - [Running Companion Tools & Experiments](#running-companion-tools--experiments)
-3. [Workstation Interface & Viewport Architecture](#3-workstation-interface--viewport-architecture)
-   - [Viewport Navigation & Camera Controls](#viewport-navigation--camera-controls)
-   - [Auto-Collapsing Left CAD Toolbar](#auto-collapsing-left-cad-toolbar)
-   - [Top Header Bar & View Presets](#top-header-bar--view-presets)
-   - [Dockable Transform Navigator](#dockable-transform-navigator)
-4. [3D Drawing, Inking & Sculpting Tools](#4-3d-drawing-inking--sculpting-tools)
-   - [Surface Pen & 3D Conformal Bead Generator](#surface-pen--3d-conformal-bead-generator)
-   - [Free Spatial 3D Brush (Airbrush)](#free-spatial-3d-brush-airbrush)
-   - [Dynamic UV Texture Atlas Brush](#dynamic-uv-texture-atlas-brush)
-   - [3D Volumetric Mesh Liquify](#3d-volumetric-mesh-liquify)
-   - [Spline-Based Swept Lofts (Bent Guides)](#spline-based-swept-lofts-bent-guides)
-   - [Dual Eraser Modes: Cutout vs. Vacuum](#dual-eraser-modes-cutout-vs-vacuum)
-   - [Algorithmic Shape Snapping & Recognition](#algorithmic-shape-snapping--recognition)
-   - [3D Geometric Primitives Spawner](#3d-geometric-primitives-spawner)
-5. [Stylus, Tablet & Precision Input Systems](#5-stylus-tablet--precision-input-systems)
-   - [Stylus Dynamics & Pressure Sensitivity](#stylus-dynamics--pressure-sensitivity)
-   - [Stylus Radial Menu](#stylus-radial-menu)
-   - [Touch vs. Pen Rejection & Accessibility Modes](#touch-vs-pen-rejection--accessibility-modes)
-   - [Touchpad Precision Numpad](#touchpad-precision-numpad)
-   - [Single-Hand Dual Thumb Navigation](#single-hand-dual-thumb-navigation)
-6. [Materials, Shaders & Visual Effects Engine](#6-materials-shaders--visual-effects-engine)
-   - [Material Types](#material-types)
-   - [27 Animated Procedural GLSL Shaders](#27-animated-procedural-glsl-shaders)
-   - [OKLab / OKLCh Perceptual Color Studio](#oklab--oklch-perceptual-color-studio)
-   - [Procedural Surface Patterns](#procedural-surface-patterns)
-   - [Weighted Blended Order-Independent Transparency (WBOIT)](#weighted-blended-order-independent-transparency-wboit)
-   - [Cinematic Post-Processing Suite](#cinematic-post-processing-suite)
-   - [Holistic DNA Stroke Inspector](#holistic-dna-stroke-inspector)
-7. [Procedural Skybox Studio & Atmosphere Engine](#7-procedural-skybox-studio--atmosphere-engine)
-   - [Physical Rayleigh & Mie Scattering](#physical-rayleigh--mie-scattering)
-   - [Interactive Celestial Dome & Sun/Moon Orbit](#interactive-celestial-dome--sunmoon-orbit)
-   - [Multi-Layer Volumetric Clouds](#multi-layer-volumetric-clouds)
-   - [Crepuscular God Rays & Weather Fog](#crepuscular-god-rays--weather-fog)
-   - [Zenith-to-Horizon Gradient Curve Editor](#zenith-to-horizon-gradient-curve-editor)
-   - [360° Equirectangular Panorama Exporter](#360-equirectangular-panorama-exporter)
-8. [Layers, Scaffolding, Symmetry & Reference Overlays](#8-layers-scaffolding-symmetry--reference-overlays)
-   - [Photoshop-Grade Layer Management](#photoshop-grade-layer-management)
-   - [Anatomical & Geometric Scaffolding Guides](#anatomical--geometric-scaffolding-guides)
-   - [Arbitrary 3D Plane Symmetry](#arbitrary-3d-plane-symmetry)
-   - [Floating Reference Clipboard & Tracing Mode](#floating-reference-clipboard--tracing-mode)
-9. [Universal 3D Model Conversion & Draco Compression](#9-universal-3d-model-conversion--draco-compression)
-   - [Universal 8-Format Importer](#universal-8-format-importer)
-   - [Bounding Box Normalization & Floor Snapping](#bounding-box-normalization--floor-snapping)
-   - [Google Draco Quantization Suite](#google-draco-quantization-suite)
-   - [In-App Local Model Library & IndexedDB Persistence](#in-app-local-model-library--indexeddb-persistence)
-10. [Export Formats & Delivery Pipelines](#10-export-formats--delivery-pipelines)
-11. [Master Keyboard Shortcuts & Gestures Matrix](#11-master-keyboard-shortcuts--gestures-matrix)
-12. [Troubleshooting & Performance Optimization](#12-troubleshooting--performance-optimization)
+> **Document Version**: `v16.0.0`  
+> **Workspace**: `E:\X\AiStudio Workflow\V16 Antigravity`  
+> **Core Technology**: WebGPU / WebGL2, Three.js, Bishop RMF Geometry, OKLab Perceptual Color, WBOIT, Google Draco WASM  
+> **Technical Reference**: For mathematical foundations, RMF derivations, and WGSL compute kernels, see [ARCHITECTURE_INTERNALS.md](file:///E:/X/AiStudio%20Workflow/V16%20Antigravity/ARCHITECTURE_INTERNALS.md).  
+> **Comprehensive Manual**: For full architectural details, see [COMPLETE_USER_GUIDE.md](file:///E:/X/AiStudio%20Workflow/V16%20Antigravity/COMPLETE_USER_GUIDE.md).
 
 ---
 
-## 1. Executive Overview
+## Welcome to Remix 3D Studio
 
-The **Remix 3D Model Painting Studio & Draco Compression Suite** is a state-of-the-art, client-side 3D workstation designed for digital artists, 3D modelers, game developers, and creative technologists. It unifies high-fidelity 3D freehand sketching, PBR surface painting, dynamic UV texturing, procedural mesh generation, volumetric deformation, and asset compression directly within the browser without requiring external heavy software like Blender, ZBrush, or Substance Painter.
+Remix 3D Studio is an intuitive 3D spatial drawing, surface painting, and volumetric sculpting workstation. Designed from the ground up for tablets, active styluses, and modern desktop browsers, Remix 3D lets you sketch freely in 3D air, paint directly onto 3D character templates, and export game-ready compressed assets without the steep learning curves of legacy desktop CAD software.
+
+The studio operates across two seamless modes:
+- **Play Mode [Play]**: A clean, distraction-free 4-zone interface tailored for immediate sketching, coloring book templates, and fast concept art.
+- **Pro Mode [Pro]**: An advanced suite unlocking parametric CAD lofting, multi-layer GPU compositing, physically based rendering (PBR), 27 procedural GLSL shaders, and universal 8-format Draco model compression.
+
+---
+
+## Visual Table of Contents
+
+- [Part 1: First Run & The 60-Second Sketch](#part-1-first-run--the-60-second-sketch)
+  - [1.1 The 4 Immutable Screen Zones](#11-the-4-immutable-screen-zones-play)
+  - [1.2 The Finger-Pen Golden Rule](#12-the-finger-pen-golden-rule-play)
+  - [1.3 15-Second Hands-On Walkthrough: Painting on a Toybox Template](#13-15-second-hands-on-walkthrough-painting-on-a-toybox-template-play)
+- [Part 2: Spatial Drafting & Sculpting Workflow](#part-2-spatial-drafting--sculpting-workflow)
+  - [2.1 The 3 Core Brushes vs Pro Presets](#21-the-3-core-brushes-play-vs-pro-presets-pro)
+  - [2.2 The 6 Magic FX Shaders vs Full PBR Mode](#22-the-6-magic-fx-shaders-play-vs-full-pbr-mode-pro)
+  - [2.3 Shape Snapping: Lines, Circles, Polygons](#23-shape-snapping-lines-circles-polygons-play)
+  - [2.4 Instant Correction: Super Zap vs Volumetric Liquify](#24-instant-correction-super-zap-play-vs-volumetric-liquify-pro)
+- [Part 3: Spatial Navigation & The Dual-State Navigator](#part-3-spatial-navigation--the-dual-state-navigator)
+  - [3.1 Viewport Touch Controls & View Snapping](#31-viewport-touch-controls--view-snapping-play)
+  - [3.2 Flat Screen Mode](#32-flat-screen-mode-play)
+  - [3.3 3D World Mode & The Orthographic Safety Guard](#33-3d-world-mode--the-orthographic-safety-guard-play)
+- [Part 4: Stage, Lighting & Reference Scaffolding](#part-4-stage-lighting--reference-scaffolding)
+  - [4.1 1-Tap Atmospheric Presets & Celestial Dome](#41-1-tap-atmospheric-presets--celestial-dome-play--pro)
+  - [4.2 Tracing Mode: Floating 2D Clipboard Overlays](#42-tracing-mode-floating-2d-clipboard-overlays-play--pro)
+  - [4.3 Custom 3D Guides & Symmetry Planes](#43-custom-3d-guides--symmetry-planes-play--pro)
+- [Part 5: Pro Studio, Conversion & Pipeline Delivery](#part-5-pro-studio-conversion--pipeline-delivery)
+  - [5.1 The Pro Studio Drawer](#51-the-pro-studio-drawer-pro)
+  - [5.2 Multi-Layer GPU Compositor & Blend Modes](#52-multi-layer-gpu-compositor--blend-modes-pro)
+  - [5.3 Universal 8-Format Converter & Google Draco Compression](#53-universal-8-format-converter--google-draco-compression-pro)
+  - [5.4 WebXR 1:1 Scale Spatial Preview](#54-webxr-11-scale-spatial-preview-play--pro)
+  - [5.5 Complete Shortcut Matrix & Troubleshooting](#55-complete-shortcut-matrix--troubleshooting-play--pro)
+- [Goal-Oriented Step-by-Step Recipes](#goal-oriented-step-by-step-recipes)
+  - [Recipe A: Inking a Character Buck](#recipe-a-inking-a-character-buck-play--pro)
+  - [Recipe B: Carving Negative Forms & Cutouts](#recipe-b-carving-negative-forms--cutouts-pro)
+  - [Recipe C: Sweeping an Aerodynamic Arch](#recipe-c-sweeping-an-aerodynamic-arch-pro)
+
+---
+
+# Part 1: First Run & The 60-Second Sketch
+
+### 1.1 The 4 Immutable Screen Zones [Play]
+
+In Play Mode, the canvas remains open, clear, and uncluttered. Every essential function is organized into four fixed screen zones:
 
 ```
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                               AI STUDIO WORKFLOW ECOSYSTEM                              │
-├────────────────────────────────────────────────────────────────────────────────────────┤
-│  [v14] Flagship Master Workstation                                                    │
-│  ├── 3D Surface & Free-Air Drawing Engine (BVH accelerated)                           │
-│  ├── Dynamic 2048x2048 UV Texture Atlas Painter                                       │
-│  ├── 27 Animated Procedural GLSL Shaders                                              │
-│  ├── Volumetric 3D Mesh Liquify Engine (KD-Tree Spatial Deformation)                  │
-│  ├── Catmull-Rom Spline Swept Lofting & Bent Guides                                   │
-│  ├── Multi-Layer Compositor with 6 Blend Modes & Folders                              │
-│  ├── Procedural Skybox Studio (Preetham Scattering & Volumetric Clouds)               │
-│  ├── Transform Navigator (2D Planar, 3D Gimbal, Tactile Rotary Dials)                 │
-│  ├── Universal 8-Format Model Converter (GLB, OBJ, FBX, 3DS, STL, PLY, DAE)           │
-│  └── Google Draco WASM Quantization Suite (Up to 90% file size reduction)             │
-├────────────────────────────────────────────────────────────────────────────────────────┤
-│  Companion Standalone Modules & Experiments                                            │
-│  ├── [Navigator V01] Standalone Transform Navigator Widget                            │
-│  ├── [tactile-spatial-controller] Tactile Spatial UI & Haptic Controller              │
-│  ├── [webgpu-skybox-studio] WebGPU Atmosphere & Skybox Studio                         │
-│  ├── [3d-model-v02] Draco GLB Compressor & Mesh Inspector                             │
-│  └── [Experiments/] Catalog of Cloned & Reconstructed 3D Web Experiences              │
-└────────────────────────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────┐
+│ [Zone A] [Toybox Template]        Remix 3D Canvas        [Undo] [Redo] │
+├───────────────┬────────────────────────────────────────────────────────┤
+│ [Zone B]      │                                                        │
+│ ┌───────────┐ │                                                        │
+│ │   Draw    │ │                                                        │
+│ ├───────────┤ │                                                        │
+│ │   Shape   │ │                     3D VIEWPORT                        │
+│ ├───────────┤ │                                                        │
+│ │ Super Zap │ │                                                        │
+│ ├───────────┤ │                                           ┌──────────┐ │
+│ │   Move    │ │                                           │ [Zone C] │ │
+│ └───────────┘ │                                           │Dual-State│ │
+│               │                                           │Navigator │ │
+├───────────────┴───────────────────────────────────────────┴──────────┤
+│ [Zone D] [Palette Swatches (16)]  [Size Slider]  [Magic FX Tiles (6)]  │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
----
+| Screen Zone | Location | Primary Controls & Functions |
+|---|---|---|
+| **Zone A: Header Strip** | Top bar ($48\text{ px}$) | **Project Chip / Toybox Button** (opens coloring book templates), Project Title, **Undo** / **Redo**, and Quick Settings (switch to Pro Mode). |
+| **Zone B: Left Tool Dock** | Left edge | **4 Primary Actions**: **Draw** (3 brushes), **Shape** (lines, circles, polygons), **Super Zap** (clean vacuum eraser), and **Move** (select & reposition). |
+| **Zone C: Dual-State Navigator** | Bottom right | **Compact 3D Navigator**: Toggles between **Flat Screen** (2D glass transform) and **3D World** (chunky RGB axis handles and rotation arcs). |
+| **Zone D: Bottom Context Strip** | Bottom bar | **Color Swatches** (16 Candy & Cyber Neon colors), **Stroke Size Slider**, and **Magic FX Tiles** (Glow, Lava, Slime, Toon, Rainbow, Sparkle, None). |
 
-## 2. System Requirements & Quick Start
-
-### Hardware & Browser Support
-
-- **Operating System**: Windows 10/11, macOS 12+, Linux, iPadOS 16+, Android 12+.
-- **Graphics API**: Modern browser with **WebGL 2.0** support (Chrome 113+, Edge 113+, Firefox 115+, Safari 16.4+). WebGPU compute features activate automatically on supported hardware.
-- **Input Devices**:
-  - Mouse & Keyboard.
-  - Graphics Tablets & Styluses (Wacom Intuos/Cintiq, Apple Pencil, Microsoft Surface Pen, Huion, XP-Pen) with native **PointerEvents** pressure and tilt support.
-  - Multi-touch screens (iPads, Android tablets, touch monitors).
-
-### Launching the Flagship Studio (v14)
-
-The primary application is located in the [`v14/`](file:///e:/X/AiStudio%20Workflow/v14) directory.
-
-#### Method A: Command Line
-1. Open PowerShell or Terminal in the project folder:
-   ```powershell
-   cd "e:\X\AiStudio Workflow\v14"
-   ```
-2. Install dependencies (first time only):
-   ```powershell
-   npm install
-   ```
-3. Start the local Vite development server:
-   ```powershell
-   npm run dev
-   ```
-4. Open `http://localhost:3000` in your web browser.
-
-#### Method B: One-Click Windows Batch Script
-- Double-click [`start-server.bat`](file:///e:/X/AiStudio%20Workflow/v14/start-server.bat) in the `v14` directory to start the server and open the browser automatically.
-
-### Launching Mobile & Tablet LAN Sessions
-
-To paint on an iPad, Android tablet, or remote touchscreen device over your local Wi-Fi network:
-1. Double-click [`start-mobile-server.bat`](file:///e:/X/AiStudio%20Workflow/v14/start-mobile-server.bat) or run:
-   ```powershell
-   npm run dev -- --host 0.0.0.0 --port 3000
-   ```
-2. The terminal displays your local network IP (e.g., `http://192.168.1.150:3000`).
-3. Navigate to that address in Safari or Chrome on your tablet.
-
-### Running Companion Tools & Experiments
-
-| Directory | Type | How to Run |
-| :--- | :--- | :--- |
-| [`Navigator V01`](file:///e:/X/AiStudio%20Workflow/Navigator%20V01) | Standalone React Vite App | `cd "Navigator V01" && npm install && npm run dev` |
-| [`tactile-spatial-controller`](file:///e:/X/AiStudio%20Workflow/tactile-spatial-controller) | Standalone React Vite App | `cd tactile-spatial-controller && npm install && npm run dev` |
-| [`webgpu-skybox-studio`](file:///e:/X/AiStudio%20Workflow/webgpu-skybox-studio) | Standalone React Vite App | `cd webgpu-skybox-studio && npm install && npm run dev` |
-| [`3d-model-v02`](file:///e:/X/AiStudio%20Workflow/3d-model-v02) | Standalone React Vite App | `cd 3d-model-v02 && npm install && npm run dev` |
-| [`Experiments/julien-physics`](file:///e:/X/AiStudio%20Workflow/Experiments/julien-physics) | Zero-Config Standalone App | Open `Experiments/julien-physics/app/index.html` directly in any browser |
-| [`Experiments/julien-papier-gratter`](file:///e:/X/AiStudio%20Workflow/Experiments/julien-papier-gratter) | Zero-Config Standalone App | Open `Experiments/julien-papier-gratter/app/index.html` directly in any browser |
+> [!TIP]
+> **Minimalist Focus**: Panels never overlap your drawing point. Opening any bottom shelf automatically tucks other shelves away, ensuring your canvas stays completely visible.
 
 ---
 
-## 3. Workstation Interface & Viewport Architecture
+### 1.2 The Finger-Pen Golden Rule [Play]
+
+Remix 3D establishes a clear distinction between hand gestures and pen input:
 
 ```
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│ TOP HEADER BAR: Cameras | Proj | Undo/Redo | Model | Illum | Sky | Layers | Export     │
-├──────────────┬──────────────────────────────────────────────────────────┬──────────────┤
-│ LEFT TOOLBAR │                                                          │ RIGHT DOCK   │
-│              │                   3D WORKSPACE VIEWPORT                  │              │
-│ • Select     │                                                          │ • Brush Dyn  │
-│ • Primitives │                 [ Interactive 3D Model ]                 │ • Color Std  │
-│ • Pen Tool   │                                                          │ • DNA Insp   │
-│ • Curve Loft │                                                          │ • Post-Proc  │
-│ • Eraser     │                                                          │ • Liquify    │
-│ • Shape Snap │                                                          │ • Scaffolds  │
-│ • Colors     │                                                          │ • Sky Studio │
-│ • Quick Size ├──────────────────────────────────────────────────────────┤              │
-│ [Pin/Unpin]  │ BOTTOM: Single-Hand Nav | Orientation Gizmo | Navigator  │              │
-└──────────────┴──────────────────────────────────────────────────────────┴──────────────┘
+┌────────────────────────────────────────────────────────────────────────┐
+│                       THE FINGER-PEN GOLDEN RULE                       │
+├───────────────────────────────────┬────────────────────────────────────┤
+│  FINGERS NAVIGATE THE WORLD       │  THE STYLUS DRAWS THE ART          │
+├───────────────────────────────────┼────────────────────────────────────┤
+│  1 Finger  -> Orbit Turntable     │  Stylus Tip     -> Ink / Sculpt    │
+│  2 Fingers -> Pan & Zoom          │  Pressure       -> Dynamic Width   │
+│  3 Fingers -> Ortho/Flat Toggle   │  Barrel Button  -> Quick Radial    │
+└───────────────────────────────────┴────────────────────────────────────┘
 ```
 
-### Viewport Navigation & Camera Controls
-
-The central 3D viewport delivers responsive rendering with 60+ FPS performance:
-
-- **Orbit / Rotate View**: Click and drag with **Left Mouse Button** (in selection mode) or **Right Mouse Button** (while painting). On touch devices, drag with **Two Fingers**.
-- **Pan View**: Hold `Shift` + **Left Mouse Button** drag, or click and drag with **Middle Mouse Button / Scroll Wheel Drag**. On touch devices, swipe with **Three Fingers**.
-- **Zoom / Dolly**: Scroll the **Mouse Wheel**, or pinch-to-zoom on touch screens.
-- **Frame & Center Target**: Press `F` to focus and fit the active model and all drawn strokes into the camera view.
-- **Orientation Gizmo**: Click the 3D View Cube in the corner or axes labels (`X`, `Y`, `Z`) to snap immediately to orthogonal perspectives.
-
-### Auto-Collapsing Left CAD Toolbar
-
-The left toolbar is designed with intelligent space-saving auto-collapse behavior:
-- **Expanded 3-Column Dock**: Shows all primary drawing tools, selection modes (Pointer, Lasso, Marquee), 3D primitive spawners, brush profiles, size pills, color swatches, and quick undo/redo.
-- **Auto-Collapse**: After selecting a tool or interacting with the canvas, the dock smoothly minimizes sideways into a slim, non-intrusive rail.
-- **Pinning**: Click the **Pin** icon at the top of the toolbar to lock it permanently in open mode.
-- **Hover Expand**: Move your cursor over the slim rail to reveal the full dock instantly.
-
-### Top Header Bar & View Presets
-
-- **Orthographic vs. Perspective**: Toggle between True 3D Perspective and CAD Orthographic projection with one click.
-- **Camera Presets**: Fast-switch buttons for **Front**, **Back**, **Top**, **Bottom**, **Left**, **Right**, and **Isometric 45°** views.
-- **Display Modes**:
-  - `Texture`: Full PBR textured and vertex-painted display.
-  - `Clay`: Neutral matte sculpting clay shader for evaluating surface silhouettes.
-  - `Wireframe`: Polygon topology overlay.
-  - `Normals`: Vertex normal orientation vector visualizer.
-  - **Illumination & Lighting Presets**: Switch between `Studio 3-Point`, `Natural Daylight`, `Neon Cyberpunk`, `Sunset Warmth`, and `Neutral Clay`.
-
-### Dockable Transform Navigator
-
-Located at the bottom right, the **Transform Navigator** is a universal multi-modal spatial control center:
-- **2D Planar Mode**: Precision X/Y screen-space translation, rotation disc, and uniform scaling.
-- **3D Spatial Gimbal Mode**: Free-axis trackball, spherical pitch/yaw/roll rings, and 3-axis Cartesian movement handles.
-- **Tactile Mode**: High-precision rotary dials with procedural Web Audio clicks and Web Vibration API haptics.
-- **Target Scope**: Control **All Objects**, **Strokes Only**, the **Active Layer**, or the **Underlying 3D Model**.
-- **Clipboard**: Copy and paste 3D transform matrices across objects with one tap.
+1. **One Finger on Glass**: Rotates the camera smoothly around your object (turntable orbit).
+2. **Two Fingers on Glass**: Slides the camera horizontally/vertically (pan) or pinches/spreads to zoom in and out.
+3. **Three Fingers on Glass**: Toggles between perspective 3D space and orthographic flat drafting mode.
+4. **Stylus Pen Tip**: Paints, carves, and sculpts. Your palm resting on the glass is automatically ignored by hardware rejection.
+5. **Accessibility Mode ("Finger Draw")**:
+   - Do not have an active stylus? Open **Settings** in Zone A and toggle **Finger Draw**.
+   - Your single finger now draws directly on the screen, while two-finger pinch and drag handle camera navigation.
 
 ---
 
-## 4. 3D Drawing, Inking & Sculpting Tools
+### 1.3 15-Second Hands-On Walkthrough: Painting on a Toybox Template [Play]
 
-### Surface Pen & 3D Conformal Bead Generator
-
-The primary drawing engine utilizes [`conformalBeadGenerator.ts`](file:///e:/X/AiStudio%20Workflow/v14/src/core/conformalBeadGenerator.ts) and sub-millisecond BVH raycasting from [`studioEngine.ts`](file:///e:/X/AiStudio%20Workflow/v14/src/core/studioEngine.ts).
+Get drawing in 15 seconds:
 
 ```
-        3D Conformal Arched Bead Cross-Section
-                    ▲ Normal Vector
-                    │
-               .───' '───.      ◄ Arch Dome Height (domeFactor)
-             .'     │     '.
-           .'       │       '.
-      ─────┴────────┼────────┴───── ◄ Underlying Mesh Surface
-      ◄──────── Base Width ────────►
+[Tap Zone A Chip] ──> [Pick "Matilda The Cat"] ──> [Stroke with Stylus] ──> [Done!]
 ```
 
-- **Bishop Parallel Transport Frame**: Continuous frame calculation eliminates gimbal twisting and flipping when drawing in 3D curves.
-- **Silhouette Clamping**: Automatically detects when strokes approach grazing angles or sharp edges, cleanly clamping ribbon normals to prevent coplanar z-fighting.
-- **Stroke Profiles**:
-  - `Tube`: Full 3D cylindrical volumetric extrusion with circular cross-sections.
-  - `Ribbon`: Thin, dual-sided planar ribbon oriented along surface normals.
-  - `Marker`: Chisel-tip oriented ribbon with directional angle and aspect ratio control.
-  - `Conformal`: Arched dome cross-section (5+ segments) that forms a tactile physical bead on the model.
-
-### Free Spatial 3D Brush (Airbrush)
-
-Switch from **Surface** mode to **Spatial 3D** mode to draw freely in three-dimensional space without requiring a surface mesh:
-- Set the **Spatial Depth Plane** to control how far in front of the camera the strokes are generated.
-- Lock drawing to horizontal or vertical billboard planes.
-- Ideal for drawing floating ribbons, neon halos, spatial wireframes, and architectural sketches.
-
-### Dynamic UV Texture Atlas Brush
-
-The UV painting engine ([`uvPaintingEngine.ts`](file:///e:/X/AiStudio%20Workflow/v14/src/core/uvPaintingEngine.ts)) allows direct painting onto 2D texture maps wrapped around 3D geometry:
-- Uses **barycentric triangle interpolation** to calculate exact UV coordinates on model hit points.
-- Automatically maps 3D brush splats into a high-resolution 2048x2048 canvas atlas.
-- Supports continuous brush strokes across polygon seams without boundary clipping.
-- Export the painted UV atlas as a standalone PNG texture anytime.
-
-### 3D Volumetric Mesh Liquify
-
-The Liquify engine ([`liquifyEngine.ts`](file:///e:/X/AiStudio%20Workflow/v14/src/core/liquifyEngine.ts)) uses spatial KD-trees to deform and sculpt existing 3D stroke geometry in real time:
-
-| Liquify Mode | Behavior & Application |
-| :--- | :--- |
-| **Push** | Displaces vertices in the direction of cursor drag; ideal for adjusting curves and reshaping contours. |
-| **Pinch** | Pulls all vertices within the radius toward the brush center; useful for sharpening tips and narrowing waists. |
-| **Inflate** | Expands vertices outward along their local normals; thickens strokes into bulky forms. |
-| **Comb** | Re-aligns stroke tangents along the drag vector; straightens unruly curved fibers and hair strands. |
-
-Adjust **Brush Radius**, **Falloff Curve**, **Influence Strength**, and **Smoothing Iterations** in the Liquify Panel.
-
-### Spline-Based Swept Lofts (Bent Guides)
-
-The Bent Guide generator ([`loftEngine.ts`](file:///e:/X/AiStudio%20Workflow/v14/src/core/loftEngine.ts)) extrudes smooth procedural 3D manifolds along Catmull-Rom spline control points:
-- **Curve Profiles**: Extrude as `Ribbon`, `Arc`, `U-Channel`, or cylindrical `Pipe`.
-- **Curve Tension**: Smoothly adjust tension from `0.0` (centripetal/relaxed) to `1.0` (chordal/taut).
-- **Banking Twist**: Apply continuous rotational twist from `-180°` to `+180°` along the curve length.
-- **Interactive Control Nodes**: Add, move, and delete 3D guide points with spatial transform gizmos.
-
-### Dual Eraser Modes: Cutout vs. Vacuum
-
-1. **Cutout Eraser**:
-   - Acts as a negative-space volumetric cutter.
-   - Carves away intersecting sections of strokes without deleting the whole curve.
-2. **Vacuum Eraser**:
-   - Continuously purges and deletes entire stroke entities upon raycast contact.
-   - Features an eraser radius slider for bulk cleaning of complex sketches.
-
-### Algorithmic Shape Snapping & Recognition
-
-When **Shape Snapping** (`shapeSnapping: true`) is active in the toolbar:
-- Freehand sketches are analyzed upon stroke completion.
-- Automatically recognizes and perfects:
-  - **Straight Lines**: Straightens hand-drawn lines with endpoint snapping.
-  - **Circles & Ellipses**: Fits a geometric circle or ellipse with calculated radii and center.
-  - **Arcs & Curves**: Fits smooth constant-radius circular arcs.
-  - **Polygons**: Fits triangles, rectangles, and regular polygons.
-- Adjust **Shape Snap Tolerance** to control fitting sensitivity.
-
-### 3D Geometric Primitives Spawner
-
-Spawn procedural, perfectly-proportioned geometric primitives directly onto your canvas:
-- **Cube**, **Sphere**, **Cylinder**, **Torus**, **Capsule**, **Cone**, **Pyramid**, and **Disk**.
-- Primitives automatically receive BVH spatial acceleration trees and are ready for surface painting immediately upon placement.
+1. **Tap the Project Chip** in **Zone A** (top-left corner). The **Toybox Coloring Book** opens immediately.
+2. **Select any 3D Template** (for example, *Matilda the Cat*, *Low-Poly Mech*, or *Speedster Car*).
+3. The engine instantly centers the model, frames the camera, and arms the **Ribbon Brush**.
+4. **Draw across the surface with your stylus**: The stroke adheres to the 3D surface, following every contour.
+5. **Spin with one finger**: View your stroke wrapping around the 3D form in real time.
 
 ---
 
-## 5. Stylus, Tablet & Precision Input Systems
+# Part 2: Spatial Drafting & Sculpting Workflow
 
-### Stylus Dynamics & Pressure Sensitivity
+### 2.1 The 3 Core Brushes [Play] vs Pro Presets [Pro]
 
-The workstation natively captures high-resolution hardware events from graphics tablets:
-- **Pressure-to-Width**: Dynamic brush size scaling from 0% to 100% based on tip pressure.
-- **Pressure-to-Opacity**: Smooth transparency variation based on stylus pressure.
-- **Tilt & Barrel Roll**: Calculates chisel tip orientation based on pen inclination angles.
-
-### Stylus Radial Menu
-
-Press the primary stylus barrel button or hold the quick-action shortcut to display the **Stylus Radial Menu**:
-- Fast thumb/pen navigation wheel centered at your current cursor position.
-- Instant access to: Brush, Eraser, Eyedropper, Color Wheel, Undo, Redo, Size Slider, and Layer Toggle.
-- Release to select without taking your hand away from the drawing area.
-
-### Touch vs. Pen Rejection & Accessibility Modes
-
-In the Toolbar settings, customize your interaction mode:
-- **Standard Mode**: Full mouse and tablet operation.
-- **Finger-Pen Mode**: Strict palm rejection. Only active stylus tips produce drawing strokes; multi-touch fingers are reserved exclusively for orbiting, panning, and zooming.
-- **Touch-Boost Mode**: Enhances touch hitboxes and increases UI button targets for finger navigation on smaller smartphone or tablet screens.
-
-### Touchpad Precision Numpad
-
-Tap any numeric dimension pill (brush size, layer opacity, transform angle, light intensity) to open the **Touchpad Precision Numpad**:
-- Virtual numpad designed for fast stylus or finger entry.
-- Enter exact values (e.g., `12.5mm`, `45°`, `0.75`).
-- Quick +/- increment buttons and preset fraction buttons (`1/4`, `1/2`, `3/4`, `Max`).
-
-### Single-Hand Dual Thumb Navigation
-
-Enable the **Single-Hand Dual Nav** pads on tablets:
-- Left thumbpad: Continuous translation and dolly zoom.
-- Right thumbpad: Free-axis 3D camera orbit.
-- Paint with your dominant hand while manipulating the 3D model orientation continuously with your secondary thumb.
-
----
-
-## 6. Materials, Shaders & Visual Effects Engine
-
-### Material Types
-
-- **Shaded (PBR)**: Physically Based Rendering responding to directional sunlight, ambient fill, and HDR environment reflections with Roughness and Metalness sliders.
-- **Shadeless (Unlit)**: Flat illustration ink unaffected by scene lighting; maintains pure vibrant color.
-- **Glow (Emissive)**: Self-illuminating neon material that radiates light and triggers bloom effects.
-- **Cutout**: Alpha-tested stencil mask material for sharp decal borders.
-- **Animated FX**: Dynamically evaluated GLSL procedural shader materials.
-
-### 27 Animated Procedural GLSL Shaders
-
-The engine includes 27 animated GLSL shaders located in [`animatedShaders.ts`](file:///e:/X/AiStudio%20Workflow/v14/src/core/animatedShaders.ts):
-
-| Shader Effect | Category | Visual Behavior |
-| :--- | :--- | :--- |
-| `fire` | Energy & Elements | Flickering volumetric flame gradient with upward heat convection. |
-| `ocean_wave` | Liquids | Rolling oceanic crests with foaming wave peaks and specular highlights. |
-| `waterfall` | Liquids | Downward cascading high-speed liquid streaks with mist falloff. |
-| `caustic` | Liquids | Shimmering underwater refractive light web. |
-| `foam` | Liquids | Bubbly aerated foam froth with organic cell breakdown. |
-| `ripple` | Liquids | Concentric circular wave oscillations expanding outward from hit points. |
-| `lava` | Energy & Elements | Glowing molten magma fissures pulsing between fiery orange and black crust. |
-| `galaxy` | Cosmic & Sci-Fi | Swirling stellar dust, nebular arms, and twinkling star clusters. |
-| `rainbow` | Optical & Light | Continuous chromatic spectrum wave traveling across stroke tangents. |
-| `lightning` | Energy & Elements | Branching electric plasma arcs with erratic high-voltage discharge. |
-| `glitter` | Optical & Light | Sparkly microscopic facets catching specular highlights as the camera moves. |
-| `candy` | Stylized Art | Glossy rotating candy-cane helical swirls with specular lacquer. |
-| `slime` | Organic & FX | Gooey visceral bubbling fluid with subsurface light scattering. |
-| `sparkler` | Energy & Elements | Erupting pyrotechnic sparks and burning ember particles. |
-| `foliage_leaf` | Nature & Plant | Wind-blown leaf venation and chlorophyll subsurface translucency. |
-| `foliage_fir` | Nature & Plant | Layered pine needle tufts with procedural wind flutter. |
-| `cloud` | Atmosphere | Soft billowing cumulus vapor with edge sunlight transmission. |
-| `jelly` | Organic & FX | Translucent squishy gelatin with internal chromatic aberration. |
-| `plasma` | Energy & Elements | High-energy ionized gas filaments swirling in electromagnetic fields. |
-| `volumetric_plasma` | Energy & Elements | 3D multi-layered plasma density cloud with volumetric glow. |
-| `rim_light` | Stylized Art | Fresnel grazing angle highlight that outlines stroke silhouettes. |
-| `anime_cel` | Stylized Art | Crisp stepped 2-tone anime shading with ink outline borders. |
-| `jelly_warp` | Organic & FX | Sinusoidal geometric vertex distortion wave pulsing through strokes. |
-| `posterize_ink` | Stylized Art | Quantized graphic novel tonal bands with cross-hatch stippling. |
-| `aurora` | Atmosphere | Shimmering curtain of polar light dancing across magnetic field lines. |
-| `hologram` | Cosmic & Sci-Fi | Sci-Fi holographic scanlines with flickering glitch artifacts. |
-| `electric_arc` | Cosmic & Sci-Fi | High-frequency Tesla coil arcs pulsing along ribbon boundaries. |
-
-### OKLab / OKLCh Perceptual Color Studio
-
-Built with [`colorMath.ts`](file:///e:/X/AiStudio%20Workflow/v14/src/core/colorMath.ts) to eliminate muddy gray interpolation zones:
-- **Perceptually Uniform Color Mixing**: Blends colors in Cartesian OKLab space where lightness and chroma are decoupled.
-- **Harmonic Color Schemes**: One-click generation of **Complementary**, **Analogous**, **Triadic**, **Split-Complementary**, and **Tetradic** color sets.
-- **Temperature Scale**: Precision Kelvin warmth slider from icy cyan (`10,000K`) to candlelight amber (`1,800K`).
-- **Color History & Swatches**: Stores recently used colors and custom user palette banks in IndexedDB.
-
-### Procedural Surface Patterns
-
-Apply procedural textures directly to stroke geometry:
-- **Dots**: Polka-dot matrix with frequency, radius, and contrast controls.
-- **Lines / Hatching**: Parallel hatching lines with variable rotation angle (`0°` to `360°`).
-- **Cross-Hatch**: Dual-axis orthogonal cross-hatching for comic shading.
-- **Terrazzo**: Organic stone mosaic flakes with randomized color variance.
-- **Stipple**: Fine grain stipple spray with stochastic density.
-
-### Weighted Blended Order-Independent Transparency (WBOIT)
-
-The custom WBOIT render pass ([`wboitPipeline.ts`](file:///e:/X/AiStudio%20Workflow/v14/src/core/wboitPipeline.ts)) resolves overlapping transparent strokes, holographic shaders, and glass materials without sorting glitches or inverted back-face clipping.
-
-### Cinematic Post-Processing Suite
-
-Open the **Render Settings Panel** to customize your viewport aesthetics:
-- **Cel / Toon Shading**: Quantizes scene lighting into 2 to 6 discrete steps with edge detection ink lines.
-- **Bloom**: Real-time emissive glow with adjustable Intensity (`0.1`–`3.0`), Radius, and Threshold.
-- **Depth of Field (DoF)**: Simulates physical camera lens blur with Focus Distance and Aperture controls.
-- **Film Grain**: Adds organic 35mm photographic grain to reduce digital color banding.
-- **Pixelation**: Retro 8-bit / 16-bit arcade pixel downscaler (`2px` to `16px`).
-
-### Holistic DNA Stroke Inspector
-
-The **DNA Inspector** ([`HolisticDNAInspector.tsx`](file:///e:/X/AiStudio%20Workflow/v14/src/components/HolisticDNAInspector.tsx)) provides real-time telemetry on any hovered or selected stroke:
-- Linear RGB / sRGB Hex values.
-- Roughness, Metalness, and Emissive intensity metrics.
-- Surface Normal vector `(x, y, z)` and tangent direction.
-- Recorded stylus pressure curves and timestamp metadata.
-
----
-
-## 7. Procedural Skybox Studio & Atmosphere Engine
-
-The Skybox Studio ([`SkyEnvironmentPanel.tsx`](file:///e:/X/AiStudio%20Workflow/v14/src/components/SkyEnvironmentPanel.tsx) & [`proceduralSky.ts`](file:///e:/X/AiStudio%20Workflow/v14/src/core/proceduralSky.ts)) renders a physically-based atmospheric dome around your 3D scene.
+In Play Mode, brush selection is focused on three versatile tools:
 
 ```
-                      ZENITH (Top Sky Color)
-                           ┌──────────┐
-                       .───│  Zenith  │───.
-                    .-'    └──────────┘    '-.
-                  .'       Rayleigh / Mie     '.
-                .'           Scattering         '.
-               /                                  \
-             .──────────────────────────────────────.
-            │           HORIZON TRANSITION           │
-             '──────────────────────────────────────'
-               \          Distance / Height       /
-                '.              Fog             .'
-                  '.       ┌──────────┐       .'
-                    '-.    │  Ground  │    .-'
-                       '───│  Albedo  │───'
-                           └──────────┘
+┌────────────────────────────────────────────────────────────────────────┐
+│                       THE 3 CORE PLAY BRUSHES                          │
+├───────────────────┬───────────────────┬────────────────────────────────┤
+│ 1. VOLUMETRIC TUBE│ 2. RIBBON BRUSH   │ 3. STAR DUST                   │
+│    (360° Air)     │    (Conformal)    │    (Sparkle / Fur)             │
+│        ___        │     _________     │       *   .   *   .            │
+│      /     \      │    /_________/    │     .   *   .   *              │
+│     |       |     │                   │       *   .   *                │
+│      \ ___ /      │   Hugs surfaces   │   Particle scatter for glow,   │
+│   Full 3D volume  │   like satin tape │   magic dust, and organic hair │
+└───────────────────┴───────────────────┴────────────────────────────────┘
 ```
 
-### Physical Rayleigh & Mie Scattering
+1. **Volumetric Tube (`spatial_pipe`) [Play]**:
+   - Creates a 3D cylindrical tube with rounded hemispherical end caps.
+   - Looks consistent from every angle. Ideal for building 3D wireframes, pipes, neon signs, and floating structural curves.
+2. **Calligraphic Ribbon (`conformal_bead`) [Play]**:
+   - Creates a flat, tape-like band that conforms to underlying 3D models or follows your camera plane.
+   - Responds to pen pressure for fluid calligraphic tapers. Ideal for clothing folds, character ink lines, and surface details.
+3. **Star Dust (`stipple_texture`) [Play]**:
+   - Generates a scatter particle stroke that sparkles along your path.
+   - Perfect for stippling, fur textures, glowing cosmic trails, and fairy dust highlights.
 
-- **Rayleigh Scattering**: Controls molecular air scattering that creates deep blue zenith daylight.
-- **Mie Scattering & Turbidity**: Controls haze, moisture, dust, and aerosol particles around the solar disk.
-- **Ozone Absorption**: Simulates atmospheric ozone layer tinting during twilight and golden hours.
-
-### Interactive Celestial Dome & Sun/Moon Orbit
-
-Use the 2D **Celestial Dome Widget** to position solar and lunar light sources intuitively:
-- Drag the sun marker across the azimuth compass circle (`0°` to `360°`).
-- Adjust elevation from sunrise/sunset horizon (`0°`) to midday zenith (`90°`).
-- Directional scene shadows and model illumination automatically sync in real time.
-
-### Multi-Layer Volumetric Clouds
-
-- **Cloud Coverage**: Adjust cloud cover from clear skies (`0%`) to overcast storm fronts (`100%`).
-- **Altitude & Density**: Set base cloud ceiling height and optical absorption thickness.
-- **Wind Vectors**: Set wind direction and travel velocity for dynamic drifting clouds.
-
-### Crepuscular God Rays & Weather Fog
-
-- **Sun God Rays**: Post-processing radial blur shader casting crepuscular volumetric light shafts through cloud gaps.
-- **Distance Fog**: Soft linear fog blending distant geometry into the horizon.
-- **Exponential Height Fog**: Ground-hugging valley mist that dissipates with elevation.
-
-### Zenith-to-Horizon Gradient Curve Editor
-
-Customize sky colors manually with the multi-stop gradient curve editor:
-- Place color stops along the vertical altitude axis (Ground, Horizon, Mid-Sky, Zenith).
-- Real-time cubic spline interpolation between color pins.
-- Built-in atmospheric presets: `Clear Noon`, `Golden Sunset`, `Cyberpunk Neon Night`, `Overcast Dawn`, `Deep Space Nebula`.
-
-### 360° Equirectangular Panorama Exporter
-
-Export your custom atmosphere as a high-resolution 360° equirectangular cubemap or panorama image:
-- Exports as standard PNG or HDR texture files.
-- Fully compatible with Blender World Shaders, Unreal Engine SkyAtmosphere, Unity HDRI Sky, and Three.js environment maps.
+#### The Pro Presets Suite [Pro]
+Switching to **Pro Mode** unlocks the full library of 20 specialized tools, including:
+- **Marker / Chisel**: Asymmetric rectangular stroke cross-section oriented at a constant calligraphic angle.
+- **Fine Wire**: Single-pixel technical drafting stroke for architectural layouts.
+- **Dynamic UV Texture Atlas**: Paints color directly into the model's 2048x2048 PNG texture atlas.
 
 ---
 
-## 8. Layers, Scaffolding, Symmetry & Reference Overlays
+### 2.2 The 6 Magic FX Shaders [Play] vs Full PBR Mode [Pro]
 
-### Photoshop-Grade Layer Management
-
-The **Layer Panel** ([`LayerPanel.tsx`](file:///e:/X/AiStudio%20Workflow/v14/src/components/LayerPanel.tsx)) organizes complex projects:
-- **Layer Stacking**: Drag-and-drop to reorder stroke rendering hierarchy.
-- **Folder Groups**: Nest related strokes into collapsible folder groups.
-- **Opacity & Visibility**: Independent layer opacity sliders (`0%` to `100%`) and eye toggles.
-- **Locking**: Lock layers to prevent accidental drawing or erasing.
-- **6 Blend Modes**: `Normal`, `Multiply`, `Screen`, `Overlay`, `Add` (Linear Dodge), and `Subtract`.
-
-### Anatomical & Geometric Scaffolding Guides
-
-Generate collision scaffolding meshes ([`ScaffoldingModal.tsx`](file:///e:/X/AiStudio%20Workflow/v14/src/components/ScaffoldingModal.tsx)) to guide freehand character and product design:
-- **Scaffold Types**:
-  - `Mannequin Torso`: Anatomical human ribcage, spine, and pelvis proportions.
-  - `Head Sphere`: Loomis method cranial sphere with jawline guidelines.
-  - `Capsule / Limb`: Articulated cylindrical arm, leg, and finger proxies.
-  - `Car Chassis`: Vehicle bounding proportions and wheel well curves.
-- **Render Modes**:
-  - `Ghost`: Semi-transparent tinted hologram.
-  - `Wireframe`: Clean polygonal cage.
-  - `Solid`: Opaque matte clay surface.
-  - `Invisible (Collision Only)`: Acts as an invisible raycast collision surface for inking without being seen.
-
-### Arbitrary 3D Plane Symmetry
-
-Configure 3D symmetry planes ([`CustomMirrorModal.tsx`](file:///e:/X/AiStudio%20Workflow/v14/src/components/CustomMirrorModal.tsx)):
-- **Standard Symmetry**: Instant mirror reflection across `X-Axis`, `Y-Axis`, or `Z-Axis`.
-- **Radial Symmetry**: Multi-axis radial mirror (`4x` or `8x` rotational symmetry around origin).
-- **Custom Plane**: Position the symmetry origin point `(x, y, z)`, set arbitrary normal vectors, and adjust Euler rotation angles with visual semi-transparent plane guides.
-
-### Floating Reference Clipboard & Tracing Mode
-
-The Reference Clipboard ([`FloatingReferenceClipboard.tsx`](file:///e:/X/AiStudio%20Workflow/v14/src/components/FloatingReferenceClipboard.tsx)) overlays concept art and photos directly into your workspace:
-- **Drag-and-Drop Import**: Drop any PNG, JPG, or WebP image into the viewport.
-- **Tracing Mode (`Click-Through`)**: Pointer clicks pass through the image directly into the 3D canvas, enabling 1:1 drawing over reference silhouettes.
-- **Pin to Screen**: Toggle between screen-locked overlay and floating 3D spatial billboard.
-- **Image Filters**: Invert colors, Grayscale conversion, Opacity slider, and Horizontal/Vertical mirror flipping.
-
----
-
-## 9. Universal 3D Model Conversion & Draco Compression
-
-### Universal 8-Format Importer
-
-The converter engine ([`modelConverter.ts`](file:///e:/X/AiStudio%20Workflow/v14/src/core/modelConverter.ts) & [`modelLoader.ts`](file:///e:/X/AiStudio%20Workflow/v14/src/core/modelLoader.ts)) parses and standardizes 8 industry-standard 3D formats on the client:
+Transform the visual character of your artwork with a single tap in **Zone D**:
 
 ```
-[ .GLB / .GLTF ] ──┐
-[ .OBJ + .MTL  ] ──┤
-[ .FBX         ] ──┼──► Universal Model Parser ──► BVH Indexing ──► 3D Viewport
-[ .3DS         ] ──┤    & Draco WASM Encoder       & Mesh Cache
-[ .STL         ] ──┤
-[ .PLY / .DAE  ] ──┘
+┌────────────────────────────────────────────────────────────────────────┐
+│                          THE 6 MAGIC FX TILES                          │
+├───────────────┬───────────────┬────────────────────────────────────────┤
+│ Neon Glow     │ Rim-light halo│ Glowing lasers, cyber accents, embers  │
+│ Lava          │ Animated flow │ Molten rock, volcanic crusts           │
+│ Slime         │ Organic pulse │ Alien goo, gelatinous blobs, venom     │
+│ Cartoon       │ Cel-shaded    │ Anime linework, comic book shading     │
+│ Rainbow       │ Spectral wave │ Shifting iridescent ribbons            │
+│ Sparkle       │ Shimmering    │ Gemstones, stardust, disco glitter     │
+│ None          │ Plain paint   │ Classic clean, unshaded pigment        │
+└───────────────┴───────────────┴────────────────────────────────────────┘
 ```
 
-- **GLB / GLTF**: Binary and JSON glTF 2.0 files with PBR materials.
-- **OBJ + MTL**: Wavefront geometry with material libraries and texture maps.
-- **FBX**: Autodesk Filmbox binary and ASCII models with skeletal hierarchies.
-- **3DS**: Legacy 3D Studio meshes.
-- **STL**: Stereolithography CAD and 3D print meshes.
-- **PLY**: Stanford polygon point cloud and triangle models.
-- **DAE**: Collada digital asset exchange files.
+> [!NOTE]
+> Every Magic FX tile configures illumination, emission, and vertex animation automatically. Selecting **Neon Glow** immediately boosts emissive intensity and arms rim-lighting without requiring manual shader setup.
 
-### Bounding Box Normalization & Floor Snapping
-
-Imported models of erratic scales and misaligned orientations are sanitized automatically:
-- **Center Origin**: Automatically centers the geometric mass at `(0, 0, 0)`.
-- **Snap to Floor**: Shifts the lowest bounding box vertex to rest at `Y = 0.0`.
-- **Uniform Scaling**: Scales models to fit within the standard studio viewport envelope (normalized bounding diameter of 2.0 units).
-- **Up-Axis Conversion**: One-click toggle between `Y-Up` (standard Three.js/OpenGL) and `Z-Up` (Blender/CAD).
-
-### Google Draco Quantization Suite
-
-Integrated Google Draco WASM compression shrinks multi-megabyte 3D files by up to 90%:
-- **Compression Level**: Configurable encoder effort from `1` (instant) to `10` (maximum reduction).
-- **Position Quantization**: `8` to `16` bits (controls vertex coordinate precision).
-- **Normal Quantization**: `6` to `12` bits (controls surface shading smoothness).
-- **UV Quantization**: `6` to `12` bits (controls texture coordinate accuracy).
-- **Color Quantization**: `6` to `10` bits (controls vertex color fidelity).
-
-### In-App Local Model Library & IndexedDB Persistence
-
-The **Model Library Modal** ([`ModelLibraryModal.tsx`](file:///e:/X/AiStudio%20Workflow/v14/src/components/ModelLibraryModal.tsx)) stores assets locally:
-- Saves imported models, calibrations, custom strokes, and auto-generated thumbnail previews in browser **IndexedDB**.
-- Zero upload to external cloud servers; 100% private and offline-capable.
-- Pre-bundled templates include: *Capybara Bath*, *Chonky Axolotl*, *Pusheen Cat*, *Akira Bike*, and *Ash Character*.
+#### Full Physically Based Rendering (PBR) Engine [Pro]
+In Pro Mode, expand the **Brush Settings** drawer to manually configure material parameters:
+- **Base Color & Linear OKLab Gamut**
+- **Roughness Slider** ($0.04 = \text{mirror polish}, 1.0 = \text{matte chalk}$)
+- **Metalness Slider** ($0.0 = \text{dielectric plastic/wood}, 1.0 = \text{conductive gold/chrome}$)
+- **Clearcoat & Transmission** (for glass, gemstones, and varnished surfaces)
+- **27 Animated GLSL Shaders** (including Plasma, Hologram, Matrix Data Rain, Fireball, and Cyber Grid).
 
 ---
 
-## 10. Export Formats & Delivery Pipelines
+### 2.3 Shape Snapping: Lines, Circles, Polygons [Play]
 
-Open the **Export Modal** ([`ExportModal.tsx`](file:///e:/X/AiStudio%20Workflow/v14/src/components/ExportModal.tsx)) from the top header bar to generate production deliverables:
+Create geometric forms without manual ruler tools:
 
-| Export Option | Format / Extension | Output Contents & Target Use Case |
-| :--- | :--- | :--- |
-| **Draco-Compressed GLB** | `.glb` | Quantized binary glTF with embedded vertex colors, materials, and stroke meshes. Ideal for web apps and games. |
-| **Standard GLB** | `.glb` | Uncompressed glTF 2.0 compatible with Blender, Unity, Unreal Engine, Substance 3D, and Godot. |
-| **Wavefront OBJ + MTL** | `.obj` + `.mtl` | Universal geometry file with accompanying material definition text. Compatible with legacy CAD and DCC tools. |
-| **UV Texture Map (2K/4K)** | `.png` | 2048x2048 (or 4096) high-resolution PNG image containing painted UV texture atlases. |
-| **Studio Snapshot Render** | `.png` | Viewport frame capture rendered at canvas native resolution with transparent or solid background. |
-| **Vector Stroke JSON** | `.json` | Raw 3D spline coordinate data, pressure curves, normals, and brush settings for programmatic replay or AI pipelines. |
-| **WebXR AR Model** | `.usdz` / `.glb` | Augmented reality file ready for instant QuickLook on iOS (USDZ) and Scene Viewer on Android (GLB). |
+```
+Draw rough shape ──> Hold pen steady for 300 ms ──> [Instant Perfect Snap!]
+```
 
----
-
-## 11. Master Keyboard Shortcuts & Gestures Matrix
-
-### Tool Selection & Drawing
-
-| Action | Shortcut Key / Mouse Action | Description |
-| :--- | :--- | :--- |
-| **Surface Brush** | `B` or `1` | Selects standard 3D surface painting brush. |
-| **Free Spatial Brush** | `Shift` + `B` | Activates free 3D air drawing mode. |
-| **UV Atlas Brush** | `U` | Activates dynamic UV texture painting mode. |
-| **Eraser Toggle** | `E` or `2` | Toggles between current brush and eraser. |
-| **Eyedropper Tool** | `I` or `3` (or hold `Alt`) | Samples color and material DNA from any 3D hit point. |
-| **Liquify Tool** | `L` or `4` | Activates 3D volumetric mesh deformation brush. |
-| **Straight Line Lock** | Hold `Shift` while drawing | Constrains the active stroke to a straight 3D line. |
-| **Undo Last Action** | `Ctrl` + `Z` (or `Cmd` + `Z`) | Reverts the last stroke, layer edit, or transform. |
-| **Redo Action** | `Ctrl` + `Y` / `Ctrl` + `Shift` + `Z` | Re-applies the previously undone action. |
-| **Brush Size Up** | `]` (Right Bracket) | Increases brush radius by 10%. |
-| **Brush Size Down** | `[` (Left Bracket) | Decreases brush radius by 10%. |
-
-### Viewport & Camera Navigation
-
-| Action | Shortcut Key / Touch Gesture | Description |
-| :--- | :--- | :--- |
-| **Orbit Camera** | Right-Click Drag / Two-Finger Drag | Rotates camera around current focal point. |
-| **Pan Camera** | Middle-Click Drag / Three-Finger Drag | Shifts camera position laterally. |
-| **Zoom In / Out** | Scroll Wheel / Pinch Gesture | Moves camera closer or further from focal target. |
-| **Frame & Center (Focus)** | `F` | Fits active 3D model and all strokes within camera view. |
-| **Front View** | `Numpad 1` | Snaps camera to Orthogonal Front perspective. |
-| **Side View (Right)** | `Numpad 3` | Snaps camera to Orthogonal Right side perspective. |
-| **Top View** | `Numpad 7` | Snaps camera to Orthogonal Top perspective. |
-| **Isometric View** | `Numpad 5` | Snaps camera to standard 45° isometric perspective. |
-| **Toggle Projection** | `P` | Switches between Perspective and Orthographic cameras. |
-| **Toggle Floor Grid** | `G` | Toggles visibility of the ground measurement grid. |
-| **Reset View** | `Home` | Resets camera to default starting position and zoom. |
-
-### Panels, Modals & Workflows
-
-| Action | Shortcut Key | Description |
-| :--- | :--- | :--- |
-| **Color Studio** | `C` | Opens the OKLab / OKLCh Color Studio modal. |
-| **Brush Settings** | `K` | Opens Brush Dynamics & Jitter settings. |
-| **Layer Stack** | `Ctrl` + `L` | Toggles Layer Stack and blend mode panel. |
-| **Model Library** | `M` | Opens in-app 3D Model Library and template browser. |
-| **Model Converter** | `Ctrl` + `M` | Opens Universal 3D Format Converter & Draco Suite. |
-| **Illumination Studio** | `H` | Opens Lighting & HDRI Environment editor. |
-| **Skybox Studio** | `S` | Opens Procedural Sky, Cloud & Atmosphere panel. |
-| **Scaffolding Guide** | `Ctrl` + `G` | Opens Anatomical & Geometric Scaffolding generator. |
-| **Reference Clipboard** | `R` | Opens Floating Reference Image Overlay clipboard. |
-| **Export Dialog** | `Ctrl` + `E` | Opens GLB, OBJ, UV, and Snapshot export modal. |
-| **Stylus Radial Menu** | Stylus Barrel Button / `Spacebar` | Summons radial shortcut menu at cursor coordinates. |
+1. Select **Shape** in **Zone B** (or keep Draw active with shape-snapping enabled).
+2. Draw a straight line, ellipse, circle, triangle, or rectangle in freehand 3D space.
+3. **Hold the pen tip stationary against the glass for 300 milliseconds** at the end of the stroke.
+4. The recognition engine analyzes stroke curvature, detects the geometric intent, and snaps the spline into a clean primitive:
+   - **Lines**: Snaps to a straight vector with optional grid snapping.
+   - **Circles & Ellipses**: Replaces wobbly loops with a circular or elliptical spline.
+   - **Regular Polygons**: Snaps triangles, squares, and pentagons into planar closed polygons.
 
 ---
 
-## 12. Troubleshooting & Performance Optimization
+### 2.4 Instant Correction: Super Zap [Play] vs Volumetric Liquify [Pro]
 
-### 1. Viewport FPS Drops on Dense Meshes
-- **Cause**: Multi-million polygon raw meshes with unoptimized collision geometry.
-- **Fix**: Open the **Raycast Settings Modal** (`RaycastSettingsModal.tsx`) and switch Raycast Sample Density from `Ultra (48)` to `Standard (16)`. Enable **Double-Sided Raycasting** only when painting thin two-sided sheets.
+Correcting mistakes in 3D should be quick and predictable:
 
-### 2. Coplanar Z-Fighting or Flickering Strokes
-- **Cause**: Stroke geometry sharing exact coplanar depth with underlying mesh polygons.
-- **Fix**: The studio automatically applies a base surface offset (`0.002` units). If flickering occurs on low-curvature surfaces, increase **Surface Offset** in the Brush Settings Panel to `0.004` or `0.006`.
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        SUPER ZAP VACUUM ERASER                         │
+├────────────────────────────────────────────────────────────────────────┤
+│       Raw Stroke Mesh                Drag Super Zap Across Stroke      │
+│     ~~~~~~~~~~●~~~~~~~~~~       ───>                                   │
+│   (Intersecting segments)            (Entire stroke cleanly purged)   │
+└────────────────────────────────────────────────────────────────────────┘
+```
 
-### 3. Palm Touches Causing Stray Strokes on Tablets
-- **Cause**: Simultaneous touch events and pen input registered by browser.
-- **Fix**: Enable **Finger-Pen Mode** in the toolbar. This locks drawing strictly to hardware stylus pens and reserves finger touches exclusively for camera orbit, pan, and zoom.
+1. **Super Zap Vacuum Tool [Play]**:
+   - Tap **Super Zap** in **Zone B** and drag across any stroke.
+   - The engine identifies the intersecting curve and purges the entire stroke cleanly from the scene.
+   - Leaves zero floating crumbs, micro-slivers, or orphan vertices.
+   - If you make a mistake, tap **Undo** in **Zone A** to restore the stroke.
 
-### 4. Draco WASM Decoder Loading Error
-- **Cause**: Missing static Draco decoder binaries in the public folder.
-- **Fix**: Ensure the [`public/draco/`](file:///e:/X/AiStudio%20Workflow/v14/public/draco) directory contains `draco_decoder.wasm` and `draco_wasm_wrapper.js`. Vite automatically serves these assets at `/draco/`.
+2. **Cutout Eraser Mode [Pro]**:
+   - Slices through 3D ribbons and tubes like a knife, subtracting geometry to create holes, windows, and cutouts.
 
-### 5. WebGPU Backend Not Activating
-- **Cause**: Browser hardware acceleration disabled or outdated GPU drivers.
-- **Fix**: In Chrome or Edge, navigate to `chrome://flags/#enable-unsafe-webgpu` and verify that Hardware Acceleration is enabled in browser system settings. The application automatically falls back to high-performance **WebGL2** if WebGPU is unavailable.
+3. **Volumetric Liquify Brush [Pro]**:
+   - Push, pull, expand, and pinch existing 3D geometry vertices smoothly like digital clay.
 
 ---
 
-## Summary & Quick Links
+# Part 3: Spatial Navigation & The Dual-State Navigator
 
-- [Flagship Application Directory (`v14`)](file:///e:/X/AiStudio%20Workflow/v14)
-- [Codebase Specification (`v14/CODEBASE.md`)](file:///e:/X/AiStudio%20Workflow/v14/CODEBASE.md)
-- [Core Studio Engine (`studioEngine.ts`)](file:///e:/X/AiStudio%20Workflow/v14/src/core/studioEngine.ts)
-- [27 Animated Shaders (`animatedShaders.ts`)](file:///e:/X/AiStudio%20Workflow/v14/src/core/animatedShaders.ts)
-- [Universal Model Converter (`modelConverter.ts`)](file:///e:/X/AiStudio%20Workflow/v14/src/core/modelConverter.ts)
-- [Transform Navigator Suite (`TransformNavigator.tsx`)](file:///e:/X/AiStudio%20Workflow/v14/src/components/TransformNavigator/TransformNavigator.tsx)
-- [Procedural Skybox Engine (`proceduralSky.ts`)](file:///e:/X/AiStudio%20Workflow/v14/src/core/proceduralSky.ts)
-- [Experiments Gallery Catalog (`Experiments/README.md`)](file:///e:/X/AiStudio%20Workflow/Experiments/README.md)
+### 3.1 Viewport Touch Controls & View Snapping [Play]
+
+Navigate 3D space fluidly:
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                      VIEWPORT TOUCH MANIPULATION                       │
+├───────────────────────┬───────────────────────┬────────────────────────┤
+│ 1-Finger Drag         │ 2-Finger Drag         │ 2-Finger Pinch / Twist │
+│ Orbit turntable       │ Pan camera            │ Zoom in/out & roll     │
+└───────────────────────┴───────────────────────┴────────────────────────┘
+```
+
+- **Snap to Orthographic Views**: Tap any axis pip on the mini-cube gizmo:
+  - **Front ($+Z$)** / **Back ($-Z$)**
+  - **Top ($+Y$)** / **Bottom ($-Y$)**
+  - **Right ($+X$)** / **Left ($-X$)**
+- **Framing Objects**: Double-tap empty canvas space with one finger to center and frame the current selection.
+
+---
+
+### 3.2 Flat Screen Mode [Play]
+
+Located in **Zone C**, the Dual-State Navigator defaults to **Flat Screen** mode:
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                           FLAT SCREEN MODE                             │
+├────────────────────────────────────────────────────────────────────────┤
+│                     ┌────────────────────────┐                         │
+│                     │       ▲ Up             │                         │
+│                     │  ◄──  +  ──►           │                         │
+│                     │      Crosshair         │                         │
+│                     │       ▼ Down           │                         │
+│                     └────────────────────────┘                         │
+│   Dragging inside moves the object across your 2D display glass        │
+│   Pivot point stays anchored to the screen-center crosshair            │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+- **Screen-Space Translation**: Dragging within the inner circle moves the selected 3D object parallel to your screen glass.
+- **Predictable Framing**: Reposition objects intuitively without altering camera depth ($Z$).
+- **Centroid Pivot**: Rotations pivot around the center of your screen, matching 2D graphic design workflows.
+
+---
+
+### 3.3 3D World Mode & The Orthographic Safety Guard [Play]
+
+Tap the mode toggle on the Navigator header to enter **3D World** mode:
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                            3D WORLD MODE                               │
+├────────────────────────────────────────────────────────────────────────┤
+│                           [G] +Y (Green)                               │
+│                            │                                           │
+│                            │   Concentric Rotation Rings               │
+│                            │  /   (Dashed Arcs)                        │
+│                            o ─ ─ ─ ─ ─ [R] +X (Red)                    │
+│                           /                                            │
+│                          /                                             │
+│                       [B] +Z (Blue)                                    │
+│                                                                        │
+│   Chunky colored nodes move objects along primary 3D world axes.       │
+│   Dashed arcs rotate objects along precise 15° snap increments.        │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+- **Red Node ($+X$)**: Slide object along the world Left/Right axis.
+- **Green Node ($+Y$)**: Slide object along the world Up/Down axis.
+- **Blue Node ($+Z$)**: Slide object along the world Forward/Back depth axis.
+- **Dashed Concentric Arcs**: Drag around the ring to rotate in $15^\circ$ tactile increments.
+
+#### The Orthographic Safety Guard
+When drawing in an orthographic projection (Front, Top, or Side view), navigating depth can accidentally misplace strokes. The engine activates an **Orthographic Safety Guard**:
+- The depth axis locks automatically.
+- A status toast appears: **"Depth locked — you're drawing flat"**.
+- Your strokes stay coplanar, making technical orthographic drafting predictable.
+
+---
+
+# Part 4: Stage, Lighting & Reference Scaffolding
+
+### 4.1 1-Tap Atmospheric Presets & Celestial Dome [Play / Pro]
+
+Set up scene atmosphere and lighting from the stage settings drawer:
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        ATMOSPHERIC SKY PRESETS                         │
+├───────────────┬────────────────────────────────────────────────────────┤
+│ Dawn / Golden │ Warm golden sunlight, soft morning horizon fog         │
+│ High Noon     │ Crisp overhead lighting, physical Rayleigh scattering  │
+│ Sunset        │ Rich crimson & violet hues, deep directional shadows   │
+│ Cyber Night   │ Neon moonlight, dark starfield, bioluminescent glow    │
+│ Studio Void   │ Pure neutral gray backdrop for portfolio renders       │
+└───────────────┴────────────────────────────────────────────────────────┘
+```
+
+#### The Interactive Celestial Dome [Pro]
+Open the **Celestial Dome Widget** to position the sun and moon:
+- Drag the glowing sun disc across the dome: Rayleigh and Mie scattering update dynamically, shifting the atmosphere from noon blue to golden hour orange.
+- Adjust **Volumetric Cloud Coverage** and **Crepuscular God Rays** for cinematic outdoor lighting.
+
+---
+
+### 4.2 Tracing Mode: Floating 2D Clipboard Overlays [Play / Pro]
+
+Use reference art and turnarounds directly inside 3D space:
+
+```
+[Copy Reference Image] ──> [Paste into Remix 3D] ──> [Trace in 3D Space]
+```
+
+1. Copy any image to your clipboard and press `Ctrl+V` (or tap **Import Image** in the stage drawer).
+2. The image appears as a semi-transparent floating reference plane.
+3. **Display Modes**:
+   - **Screen HUD Lock**: The reference stays pinned to your screen glass like tracing paper while you rotate your 3D model behind it.
+   - **World Anchor**: The reference sits in 3D world space, letting you align front and side turnaround sheets with your 3D model.
+4. Use the **Opacity Slider** to blend between the reference image and your 3D strokes.
+
+---
+
+### 4.3 Custom 3D Guides & Symmetry Planes [Play / Pro]
+
+Create balanced, symmetrical 3D artwork:
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                         BILATERAL 3D SYMMETRY                          │
+├────────────────────────────────────────────────────────────────────────┤
+│           Left Hand Stroke                 Right Hand Mirror           │
+│                 \                                 /                    │
+│                  \           │ Mirror Plane      /                     │
+│                   o ──────── │ ──────── o                              │
+│                  /           │           \                             │
+│                 /            │            \                            │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+1. Tap **Symmetry** in the top bar to enable bilateral reflection.
+2. Choose your mirror axis:
+   - **X Plane (Left/Right)**: Standard character and vehicle modeling.
+   - **Y Plane (Top/Bottom)**: Architectural reflection and decorative arches.
+   - **Z Plane (Front/Back)**: Symmetrical mechanical details.
+3. Every stroke you draw is mirrored across the plane in real time.
+
+---
+
+# Part 5: Pro Studio, Conversion & Pipeline Delivery
+
+### 5.1 The Pro Studio Drawer [Pro]
+
+Access the complete CAD and 3D modeling toolset:
+
+```
+[Settings] ──> [Toggle "Advanced Tools (Pro)"] ──> [Full CAD Suite Unlocked]
+```
+
+To enable Pro Mode:
+1. Tap the **Settings** gear icon in **Zone A**.
+2. Toggle **"Advanced Tools"**.
+3. The left dock expands to reveal the full parametric CAD and sculpting suite:
+   - **Swept Lofts & Bent Guides**: Extrude 3D cross-section profiles along interactive spline paths.
+   - **Decimation & Remeshing**: Reduce vertex counts for game engines using edge-collapse optimization.
+   - **Raycast Precision Controls**: Fine-tune contact offsets, surface snapping thresholds, and collision meshes.
+
+---
+
+### 5.2 Multi-Layer GPU Compositor & Blend Modes [Pro]
+
+Manage complex projects with a layer-based workflow:
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        GPU LAYER COMPOSITOR                            │
+├─────────┬───────────────────┬─────────┬─────────┬──────────────────────┤
+│ Layer   │ Name              │ Opacity │ Blend   │ Status               │
+├─────────┼───────────────────┼─────────┼─────────┼──────────────────────┤
+│ 3       │ Neon Highlights   │ 100%    │ Additive│ Visible, Unlocked    │
+│ 2       │ Ink Outlines      │ 100%    │ Normal  │ Visible, Locked      │
+│ 1       │ Flat Colors       │ 85%     │ Normal  │ Visible, Unlocked    │
+│ 0       │ Scaffolding Guide │ 30%     │ Screen  │ Hidden (Muted)       │
+└─────────┴───────────────────┴─────────┴─────────┴──────────────────────┘
+```
+
+- **Layer Controls**: Create up to 16 independent drawing layers. Hide, isolate, duplicate, or reorder layers without destructively flattening geometry.
+- **6 GPU Blend Modes**:
+  - **Normal**: Standard opaque alpha blending.
+  - **Multiply**: Shadows and shading passes.
+  - **Screen**: Soft atmospheric lighting.
+  - **Additive**: High-intensity lasers, fire, and magic FX.
+  - **Overlay**: Contrast boost.
+  - **Darken**: Vignettes and ambient occlusion.
+
+---
+
+### 5.3 Universal 8-Format Converter & Google Draco Compression [Pro]
+
+Import assets from any 3D workflow and export production-ready models:
+
+```
+Supported Import Formats:
+  .GLB / .GLTF  |  .OBJ (+ .MTL)  |  .FBX  |  .3DS  |  .STL  |  .PLY  |  .DAE  |  .ZIP
+```
+
+#### Automated Model Normalization
+Imported models are automatically scaled to a standard $2.0\text{ m}$ height, centered at $(0, 0, 0)$, and aligned to the ground floor plane ($Y = 0$).
+
+#### Google Draco WASM Compression Suite
+Export compressed GLB files directly from the browser:
+
+```
+Raw Uncompressed GLB (42.8 MB) ──> [Draco WASM Quantization] ──> Compressed GLB (3.9 MB)
+                                                                 (91% Size Reduction!)
+```
+
+- **Position Quantization (14-bit default)**: Preserves geometry within $0.06\text{ mm}$ spatial tolerance while shrinking vertex data.
+- **Normal Quantization (10-bit)**: Compresses surface normals using octahedral projection.
+- **Texture UV Quantization (10-bit)**: Retains crisp texture alignments without drift.
+
+---
+
+### 5.4 WebXR 1:1 Scale Spatial Preview [Play / Pro]
+
+Review your artwork in augmented or virtual reality:
+
+```
+[Tap "AR Preview"] ──> [Scan Floor / Tabletop] ──> [Inspect at True 1:1 Scale]
+```
+
+1. Tap **AR / VR Preview** in the export drawer on a compatible device (Android Chrome, Meta Quest browser, or Apple Vision Pro).
+2. Point your camera at a flat surface to place your model.
+3. Walk around your creation to evaluate physical proportions, scale, and lighting in real-world space.
+
+---
+
+### 5.5 Complete Shortcut Matrix & Troubleshooting [Play / Pro]
+
+#### Master Shortcut Matrix
+
+| Input Action | Keyboard / Mouse Shortcut | Stylus & Touch Gesture | Mode |
+|---|---|---|---|
+| **Draw / Paint** | Left Click + Drag | Pen Tip on Glass | Play & Pro |
+| **Orbit Turntable** | Right Click + Drag (or `Alt` + Left Click) | 1 Finger Drag | Play & Pro |
+| **Pan Canvas** | Middle Click + Drag (or `Space` + Drag) | 2 Finger Drag | Play & Pro |
+| **Zoom View** | Mouse Scroll Wheel | 2 Finger Pinch / Spread | Play & Pro |
+| **Snap Ortho View** | Numpad `1` (Front), `3` (Side), `7` (Top) | 3 Finger Tap | Play & Pro |
+| **Undo** | `Ctrl + Z` (Mac: `Cmd + Z`) | 2 Finger Tap (or Zone A button) | Play & Pro |
+| **Redo** | `Ctrl + Y` (Mac: `Cmd + Shift + Z`) | 3 Finger Tap (or Zone A button) | Play & Pro |
+| **Super Zap** | `X` | Tap Super Zap icon in Zone B | Play & Pro |
+| **Shape Snapping** | Hold `Shift` during draw | Hold pen stationary for 300 ms | Play & Pro |
+| **Radial Quick Menu** | Hold `Space` | Press Stylus Barrel Button | Play & Pro |
+| **Color Studio** | `C` | Long-press swatch in Zone D | Pro |
+| **Toggle Pro Mode** | `Tab` | Settings -> "Advanced tools" | Play & Pro |
+
+---
+
+#### Troubleshooting Guide
+
+##### 1. Why do my strokes appear in empty air instead of sticking to the model?
+- **Solution**: The **Ribbon Brush** (`conformal_bead`) is designed for surface inking. Ensure your brush is set to Ribbon or Conformal, and verify that your stylus tip initiates contact over the model geometry.
+
+##### 2. Why does my palm leave unwanted marks when drawing?
+- **Solution**: Hardware palm rejection requires active stylus events. Ensure your stylus battery is charged. If using finger input, turn on **Touch Rejection Guard** in Settings.
+
+##### 3. How do I restore a stroke accidentally erased with Super Zap?
+- **Solution**: Super Zap actions integrate directly into the unified undo history. Tap **Undo** (`Ctrl+Z`) in Zone A to restore the entire stroke.
+
+##### 4. Performance feels sluggish on high-poly models on older tablets.
+- **Solution**: Open **Settings -> Performance** and select **Performance Profile: Battery Saver**. This reduces viewport resolution scale to $1.0\times$, caps MSAA at $2\times$, and enables BVH bounding-box culling.
+
+---
+
+# Goal-Oriented Step-by-Step Recipes
+
+### Recipe A: Inking a Character Buck [Play / Pro]
+**Goal**: Load a 3D mannequin, mirror your linework symmetrically, and ink character costume details directly onto the surface.
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                     RECIPE A: INK A CHARACTER BUCK                     │
+├────────────────────────────────────────────────────────────────────────┤
+│  [1. Open Toybox]  ──>  [2. Arm Ribbon]  ──>  [3. Symmetry On] ──> Ink!│
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+1. **Spawn the Base Model**:
+   - Tap the Project Chip in **Zone A** to open the **Toybox**.
+   - Select **Anime Buck** or **Matilda the Cat** from the Characters category.
+   - The model centers automatically, and the camera frames the torso.
+2. **Configure Your Brush & Symmetry**:
+   - Select **Draw** in **Zone B** and choose the **Ribbon Brush** (`conformal_bead`).
+   - Tap **Symmetry** in the top bar to enable the **X Plane** mirror. A vertical dashed guide line indicates the active mirror plane.
+3. **Ink the Surface**:
+   - Choose a vibrant color from the 16-swatch palette in **Zone D** (e.g., *Cyber Cyan* or *Hot Pink*).
+   - Draw costume seams, armor plates, or facial contours directly across the character's surface.
+   - Notice how the stroke conforms to the 3D curvature while mirroring across the opposite side.
+4. **Inspect in 3D**:
+   - Use one finger to orbit around the character and verify stroke placement from multiple angles.
+
+---
+
+### Recipe B: Carving Negative Forms & Cutouts [Pro]
+**Goal**: Cut out negative spaces, window openings, and decorative patterns through 3D ribbons and tubes.
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                     RECIPE B: CARVE NEGATIVE FORMS                     │
+├────────────────────────────────────────────────────────────────────────┤
+│  [1. Switch to Pro] ──> [2. Set Cutout Eraser] ──> [3. Slice Mesh]     │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+1. **Enter Pro Mode & Draw a Base Form**:
+   - Ensure Pro Mode is active (via Settings or `Tab`).
+   - Select the **Volumetric Tube** or wide **Ribbon Brush** and draw a sweeping arc across the viewport.
+2. **Configure the Cutout Eraser**:
+   - Long-press the Eraser tool in **Zone B** to open the options drawer.
+   - Switch the mode from **Vacuum** to **Cutout**.
+   - Adjust the **Cutout Radius** slider to match the desired opening size.
+3. **Carve the Geometry**:
+   - Slice your stylus across the stroke where you want to carve openings.
+   - The engine subtracts volume from the existing stroke geometry, creating crisp negative windows without deleting the entire curve.
+4. **Finish with Magic FX**:
+   - Switch to **Neon Glow** in Zone D and paint an interior core through the hollow cutout.
+
+---
+
+### Recipe C: Sweeping an Aerodynamic Arch [Pro]
+**Goal**: Create a parametric curved architectural structure using Catmull-Rom spline guides and extruded profiles.
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                   RECIPE C: SWEEP AN AERODYNAMIC ARCH                  │
+├────────────────────────────────────────────────────────────────────────┤
+│ [1. Bent Guide Tool] ──> [2. U-Channel Profile] ──> [3. Bake Geometry] │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+1. **Draw the Guide Spline**:
+   - Open the **Pro CAD Drawer** on the left dock and select **Bent Guides / Swept Lofts**.
+   - Tap three points in 3D space to define a smooth Catmull-Rom arch.
+   - Use the 3D Navigator in **Zone C** to adjust control point heights.
+2. **Select the Extrusion Cross-Section**:
+   - In the loft settings panel, set the **Cross-Section Profile** to **U-Channel** (or *Aerodynamic Wing*).
+   - Adjust the **Profile Scale** slider to $0.15\text{ m}$.
+3. **Tune Tension & Twist**:
+   - Slide the **Spline Tension** slider to $0.5$ for a smooth, natural curve.
+   - Enable **Rotation Minimizing Frames (RMF)** to ensure the extruded channel never twists unnaturally through inflection points.
+4. **Bake into Production Geometry**:
+   - Tap **Bake Mesh**. The parametric spline converts into standard editable vertex buffers ready for Draco export.
