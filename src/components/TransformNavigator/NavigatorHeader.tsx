@@ -75,6 +75,7 @@ export const NavigatorHeader: React.FC<NavigatorHeaderProps> = ({
   onSelectTargetScope,
   accessibilityMode,
   onAccessibilityModeToggle,
+  onHeaderDragStart,
   onCopy,
   onPaste,
   clipboardCount = 0,
@@ -192,9 +193,18 @@ export const NavigatorHeader: React.FC<NavigatorHeaderProps> = ({
       : 'grid-cols-3';
 
   return (
-    <div id="transform-navigator-header" className="flex flex-col select-none border-b border-white/[0.08] relative">
+    <div
+      id="transform-navigator-header"
+      className="flex flex-col select-none border-b border-white/[0.08] relative cursor-grab active:cursor-grabbing"
+      onPointerDown={onHeaderDragStart}
+    >
+      {/* Top Grip Drag Handle Pill */}
+      <div className="w-full flex items-center justify-center pt-2 pb-0.5 touch-none select-none">
+        <div className="w-10 h-1 rounded-full bg-white/25 hover:bg-white/50 transition-colors" />
+      </div>
+
       {/* Main Controls: Segmented pill toggle + actions */}
-      <div className="px-2 pt-2 pb-1.5 flex flex-col gap-1.5">
+      <div className="px-2 pt-1 pb-1.5 flex flex-col gap-1.5">
         {/* Segmented Control Pill */}
         <div
           id="navigator-mode-segmented-control"

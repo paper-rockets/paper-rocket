@@ -216,42 +216,32 @@ export const PaperRocketTactileWheel: React.FC<FeatherTactileWheelProps> = ({
       target.closest('#feather-radial-dial') ||
       target.closest('#feather-circular-wheel') ||
       target.closest('#feather-wheel-body') ||
-      target.closest('#feather-wheel-surface') ||
-      target.closest('#paper-rocket-wheel-surface') ||
-      target.closest('#transform-navigator-header')
+      target.closest('#paper-rocket-wheel-surface')
     ) {
       return;
     }
 
     isDraggingCardRef.current = true;
-    dragCardStartRef.current = {
-      startX: e.clientX,
-      startY: e.clientY,
-      posX: position ? position.x : 0,
-      posY: position ? position.y : 0,
-    };
-
-    try {
-      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-    } catch (_) {}
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const initialX = position ? position.x : 0;
+    const initialY = position ? position.y : 0;
 
     const handlePointerMove = (moveEvent: PointerEvent) => {
       if (!isDraggingCardRef.current) return;
-      const dx = moveEvent.clientX - dragCardStartRef.current.startX;
-      const dy = moveEvent.clientY - dragCardStartRef.current.startY;
-      const maxX = Math.max(10, window.innerWidth - 275);
-      const maxY = Math.max(10, window.innerHeight - 80);
-      const newX = Math.min(maxX, Math.max(10, dragCardStartRef.current.posX + dx));
-      const newY = Math.min(maxY, Math.max(10, dragCardStartRef.current.posY + dy));
+      moveEvent.preventDefault();
+      const dx = moveEvent.clientX - startX;
+      const dy = moveEvent.clientY - startY;
+      const maxX = Math.max(0, window.innerWidth - 275);
+      const maxY = Math.max(0, window.innerHeight - 80);
+      const newX = Math.min(maxX, Math.max(0, initialX + dx));
+      const newY = Math.min(maxY, Math.max(0, initialY + dy));
       setPosition({ x: newX, y: newY });
     };
 
-    const handlePointerUp = (upEvent: PointerEvent) => {
+    const handlePointerUp = () => {
       if (isDraggingCardRef.current) {
         isDraggingCardRef.current = false;
-        try {
-          (e.currentTarget as HTMLElement).releasePointerCapture(upEvent.pointerId);
-        } catch (_) {}
         setPosition((curr) => {
           if (curr) {
             try {
@@ -263,10 +253,12 @@ export const PaperRocketTactileWheel: React.FC<FeatherTactileWheelProps> = ({
       }
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointercancel', handlePointerUp);
     };
 
-    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointermove', handlePointerMove, { passive: false });
     window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('pointercancel', handlePointerUp);
   };
 
   // Auto-clamp on window resize to ensure widget is always on screen

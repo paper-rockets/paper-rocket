@@ -263,34 +263,26 @@ export const TransformNavigator: React.FC<TransformNavigatorProps> = ({
     }
 
     isDraggingRef.current = true;
-    dragStartRef.current = {
-      startX: e.clientX,
-      startY: e.clientY,
-      posX: position.x,
-      posY: position.y,
-    };
-
-    try {
-      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-    } catch (_) {}
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const initialX = position.x;
+    const initialY = position.y;
 
     const handlePointerMove = (moveEvent: PointerEvent) => {
       if (!isDraggingRef.current) return;
-      const dx = moveEvent.clientX - dragStartRef.current.startX;
-      const dy = moveEvent.clientY - dragStartRef.current.startY;
-      const maxX = Math.max(10, window.innerWidth - 275);
-      const maxY = Math.max(10, window.innerHeight - 80);
-      const newX = Math.min(maxX, Math.max(10, dragStartRef.current.posX + dx));
-      const newY = Math.min(maxY, Math.max(10, dragStartRef.current.posY + dy));
+      moveEvent.preventDefault();
+      const dx = moveEvent.clientX - startX;
+      const dy = moveEvent.clientY - startY;
+      const maxX = Math.max(0, window.innerWidth - 275);
+      const maxY = Math.max(0, window.innerHeight - 80);
+      const newX = Math.min(maxX, Math.max(0, initialX + dx));
+      const newY = Math.min(maxY, Math.max(0, initialY + dy));
       setPosition({ x: newX, y: newY });
     };
 
-    const handlePointerUp = (upEvent: PointerEvent) => {
+    const handlePointerUp = () => {
       if (isDraggingRef.current) {
         isDraggingRef.current = false;
-        try {
-          (e.currentTarget as HTMLElement).releasePointerCapture(upEvent.pointerId);
-        } catch (_) {}
         setPosition((curr) => {
           try {
             localStorage.setItem('mody_transform_navigator_coords', JSON.stringify(curr));
@@ -300,10 +292,12 @@ export const TransformNavigator: React.FC<TransformNavigatorProps> = ({
       }
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointercancel', handlePointerUp);
     };
 
-    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointermove', handlePointerMove, { passive: false });
     window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('pointercancel', handlePointerUp);
   };
 
   // Auto-clamp on window resize to ensure widget is always within screen bounds
@@ -391,6 +385,7 @@ export const TransformNavigator: React.FC<TransformNavigatorProps> = ({
         onSelectTargetScope={onSelectTargetScope}
         accessibilityMode={accessibilityMode}
         onAccessibilityModeToggle={handleAccessibilityToggle}
+        onHeaderDragStart={handleCardDragStart}
         onCopy={onCopy}
         onPaste={onPaste}
         clipboardCount={clipboardCount}
