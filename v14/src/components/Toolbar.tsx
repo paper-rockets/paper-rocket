@@ -509,7 +509,7 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
 
   return (
     <div
-      className="fixed top-12 sm:top-14 left-2 sm:left-3 z-30 flex items-start gap-2 select-none font-sans"
+      className="fixed top-12 sm:top-14 left-2 sm:left-3 z-30 flex items-start gap-2 select-none font-sans transform-gpu isolate"
       style={{
         transform: uiScale !== 1.0 ? `scale(${uiScale})` : undefined,
         transformOrigin: 'top left',
@@ -524,10 +524,10 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
         /* MINIMIZED SLIM VERTICAL RAIL - MINIMIZES SIDEWAYS TO THE LEFT */
         <div
           id="mody-left-toolbar-minimized"
-          className={`w-12 sm:w-13 py-2.5 px-1.5 rounded-2xl backdrop-blur-xl border shadow-2xl flex flex-col items-center gap-1.5 transition-all animate-in fade-in slide-in-from-left duration-150 ${
+          className={`w-12 sm:w-13 py-2.5 px-1.5 rounded-2xl border shadow-xl flex flex-col items-center gap-1.5 transition-all select-none ${
             theme === 'light'
-              ? 'bg-white/95 border-neutral-200 text-neutral-800'
-              : 'bg-[#141519]/95 border-zinc-800 text-zinc-200'
+              ? 'bg-white border-neutral-200 text-neutral-800'
+              : 'bg-[#18191d] border-[#2b2c32] text-zinc-200'
           }`}
         >
           {/* Expand Sideways Button */}
@@ -691,10 +691,10 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
         /* EXPANDED COMPACT CAD TOOL DOCK (WITH HORIZONTAL FLYOUT SHELVES EXPANDING TO THE RIGHT) */
         <div
           id="mody-left-toolbar-dock"
-          className={`relative w-[164px] sm:w-[172px] p-2 rounded-2xl backdrop-blur-xl border shadow-2xl flex flex-col gap-1.5 transition-all animate-in fade-in slide-in-from-left duration-150 select-none ${
+          className={`relative w-[164px] sm:w-[172px] p-2 rounded-2xl border shadow-xl flex flex-col gap-1.5 transition-all select-none ${
             theme === 'light'
-              ? 'bg-white/95 border-neutral-200 text-neutral-800'
-              : 'bg-[#18191d]/95 border-[#2b2c32] text-[#e2e4ea]'
+              ? 'bg-white border-neutral-200 text-neutral-800'
+              : 'bg-[#18191d] border-[#2b2c32] text-[#e2e4ea]'
           }`}
         >
           {/* Hidden File Input for Loading .remix3d project */}
@@ -916,7 +916,7 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
                           triggerHaptic(15);
                           if (!isPinned) scheduleAutoCollapse(1200);
                         }}
-                        className={`py-1.5 px-1 rounded-lg text-center text-[10.5px] font-semibold transition-all cursor-pointer truncate ${
+                        className={`py-1.5 px-0.5 rounded-lg text-center text-[10px] font-bold tracking-tight transition-all cursor-pointer whitespace-nowrap ${
                           isSelected
                             ? 'bg-sky-500 text-white shadow-sm font-bold'
                             : theme === 'light'
@@ -1387,10 +1387,10 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
           {showPrimitivesMenu && (
             <div
               id="mody-primitives-flyout-menu"
-              className={`absolute left-full top-0 ml-2.5 w-52 p-2.5 rounded-2xl backdrop-blur-2xl border shadow-2xl z-50 flex flex-col gap-1.5 text-xs animate-in fade-in slide-in-from-left-2 duration-150 select-none ${
+              className={`absolute left-full top-0 ml-2.5 w-52 p-2.5 rounded-2xl border shadow-xl z-50 flex flex-col gap-1.5 text-xs select-none ${
                 theme === 'light'
-                  ? 'bg-white/98 border-neutral-200 text-neutral-800'
-                  : 'bg-[#141519]/98 border-zinc-800 text-zinc-200'
+                  ? 'bg-white border-neutral-200 text-neutral-800'
+                  : 'bg-[#18191d] border-[#2b2c32] text-zinc-200'
               }`}
             >
               <div className="flex items-center justify-between px-1 pb-1.5 border-b border-zinc-800/80 text-[10px] font-mono">
@@ -1441,10 +1441,10 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
           {showBrushShelf && (
             <div
               id="mody-brush-shelf-flyout"
-              className={`absolute left-full top-0 ml-2.5 w-64 sm:w-72 p-3 rounded-2xl backdrop-blur-2xl border shadow-2xl z-50 flex flex-col gap-2.5 text-xs animate-in fade-in slide-in-from-left-2 duration-150 select-none ${
+              className={`absolute left-full top-0 ml-2.5 w-64 sm:w-72 p-3 rounded-2xl border shadow-xl z-50 flex flex-col gap-2.5 text-xs select-none ${
                 theme === 'light'
-                  ? 'bg-white/98 border-neutral-200 text-neutral-800'
-                  : 'bg-[#141519]/98 border-zinc-800 text-zinc-200'
+                  ? 'bg-white border-neutral-200 text-neutral-800'
+                  : 'bg-[#18191d] border-[#2b2c32] text-zinc-200'
               }`}
             >
               <div className="flex items-center justify-between pb-1.5 border-b border-zinc-800/80">
@@ -1626,10 +1626,10 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
           {showSceneShelf && (
             <div
               id="mody-scene-shelf-flyout"
-              className={`absolute left-full top-0 ml-2.5 w-64 sm:w-72 p-3 rounded-2xl backdrop-blur-2xl border shadow-2xl z-50 flex flex-col gap-2.5 text-xs animate-in fade-in slide-in-from-left-2 duration-150 select-none ${
+              className={`absolute left-full top-0 ml-2.5 w-64 sm:w-72 p-3 rounded-2xl border shadow-xl z-50 flex flex-col gap-2.5 text-xs select-none ${
                 theme === 'light'
-                  ? 'bg-white/98 border-neutral-200 text-neutral-800'
-                  : 'bg-[#141519]/98 border-zinc-800 text-zinc-200'
+                  ? 'bg-white border-neutral-200 text-neutral-800'
+                  : 'bg-[#18191d] border-[#2b2c32] text-zinc-200'
               }`}
             >
               <div className="flex items-center justify-between pb-1.5 border-b border-zinc-800/80">
@@ -1987,10 +1987,10 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
           {showSettingsShelf && (
             <div
               id="mody-settings-shelf-flyout"
-              className={`absolute left-full top-0 ml-2.5 w-60 sm:w-64 p-3 rounded-2xl backdrop-blur-2xl border shadow-2xl z-50 flex flex-col gap-2.5 text-xs animate-in fade-in slide-in-from-left-2 duration-150 select-none ${
+              className={`absolute left-full top-0 ml-2.5 w-60 sm:w-64 p-3 rounded-2xl border shadow-xl z-50 flex flex-col gap-2.5 text-xs select-none ${
                 theme === 'light'
-                  ? 'bg-white/98 border-neutral-200 text-neutral-800'
-                  : 'bg-[#141519]/98 border-zinc-800 text-zinc-200'
+                  ? 'bg-white border-neutral-200 text-neutral-800'
+                  : 'bg-[#18191d] border-[#2b2c32] text-zinc-200'
               }`}
             >
               <div className="flex items-center justify-between pb-1.5 border-b border-zinc-800/80">

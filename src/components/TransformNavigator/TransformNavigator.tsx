@@ -342,7 +342,7 @@ export const TransformNavigator: React.FC<TransformNavigatorProps> = ({
           playHapticSound('pop', soundEnabled);
           setIsOpen(true);
         }}
-        className="fixed z-40 px-3.5 py-2 rounded-2xl bg-[#14151a]/95 backdrop-blur-2xl border border-white/[0.12] shadow-[0_12px_32px_rgba(0,0,0,0.6)] flex items-center gap-2 text-white cursor-pointer group select-none"
+        className="fixed z-40 px-3.5 py-2 rounded-2xl bg-[#14151a] border border-white/[0.12] shadow-xl flex items-center gap-2 text-white cursor-pointer group select-none transform-gpu isolate"
         title="Restore Navigator"
       >
         <Compass className="w-4 h-4 text-emerald-400" />
@@ -368,7 +368,7 @@ export const TransformNavigator: React.FC<TransformNavigatorProps> = ({
         transform: `scale(${(uiScale || 1.0) * navigatorScale})`,
         transformOrigin: 'top left',
       }}
-      className={`fixed z-40 w-[264px] sm:w-[268px] ${showHiddenPhysicsPanel ? 'min-h-[440px]' : ''} rounded-[24px] bg-[#14151a]/95 backdrop-blur-2xl border border-white/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.05)] overflow-hidden flex flex-col touch-none cursor-grab active:cursor-grabbing select-none pb-2 ${className}`}
+      className={`fixed z-40 w-[264px] sm:w-[268px] ${showHiddenPhysicsPanel ? 'min-h-[440px]' : ''} rounded-[24px] bg-[#14151a] border border-white/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.05)] overflow-hidden flex flex-col touch-none cursor-grab active:cursor-grabbing select-none pb-2 transform-gpu isolate ${className}`}
     >
       {/* Header Bar with Segmented Controls & Copy/Paste actions */}
       <NavigatorHeader
@@ -477,7 +477,7 @@ export const TransformNavigator: React.FC<TransformNavigatorProps> = ({
               setShowMenu((prev) => !prev);
               setShowHiddenPhysicsPanel(false);
             }}
-            className={`absolute bottom-2.5 left-2.5 z-30 w-7 h-7 rounded-xl flex items-center justify-center transition-all cursor-pointer backdrop-blur-md ${
+            className={`absolute bottom-2.5 left-2.5 z-30 w-7 h-7 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
               showMenu
                 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-sm'
                 : 'bg-white/[0.08] hover:bg-white/[0.16] text-neutral-400 hover:text-white border border-white/[0.06] shadow-sm'
@@ -499,7 +499,7 @@ export const TransformNavigator: React.FC<TransformNavigatorProps> = ({
               setShowMenu(false);
               setShowHiddenPhysicsPanel(false);
             }}
-            className="absolute bottom-2.5 right-2.5 z-30 w-7 h-7 rounded-xl bg-white/[0.08] hover:bg-white/[0.16] text-neutral-400 hover:text-white flex items-center justify-center transition-all cursor-pointer border border-white/[0.06] shadow-sm backdrop-blur-md"
+            className="absolute bottom-2.5 right-2.5 z-30 w-7 h-7 rounded-xl bg-white/[0.08] hover:bg-white/[0.16] text-neutral-400 hover:text-white flex items-center justify-center transition-all cursor-pointer border border-white/[0.06] shadow-sm"
             title="Minimize to Dot"
             aria-label="Minimize navigator"
           >
@@ -516,7 +516,7 @@ export const TransformNavigator: React.FC<TransformNavigatorProps> = ({
             initial={{ opacity: 0, scale: 0.92, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 8 }}
-            className="absolute bottom-11 inset-x-2 z-50 p-3.5 rounded-2xl bg-[#1c1c1f]/98 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.9)] text-neutral-200 flex flex-col gap-2.5 backdrop-blur-2xl max-h-[calc(100%-60px)] overflow-y-auto"
+            className="absolute bottom-11 inset-x-2 z-50 p-3.5 rounded-2xl bg-[#1c1c1f] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.9)] text-neutral-200 flex flex-col gap-2.5 max-h-[calc(100%-60px)] overflow-y-auto"
           >
             <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
               <span className="text-xs font-bold text-white">Navigator Options</span>
