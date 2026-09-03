@@ -590,84 +590,89 @@ export const ModelConverterModal: React.FC<ModelConverterModalProps> = ({
       >
         {/* MODAL HEADER */}
         <div
-          className="flex items-center justify-between px-6 py-4 border-b border-zinc-800 bg-[#0e0f12] select-none"
+          className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-4 sm:px-6 py-3.5 border-b border-zinc-800 bg-[#0e0f12] select-none gap-3"
         >
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-white/10 text-white font-bold">
-              <Zap className="w-5 h-5" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-baseline gap-2.5">
+              <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">3D Model Converter</h2>
+              <span className="text-xs text-zinc-500 font-mono">GLB &bull; OBJ &bull; Draco</span>
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold tracking-tight">3D Model Studio & Draco Converter</h2>
-                <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-white/10 text-zinc-300">
-                  Universal Loader & Storage
-                </span>
-              </div>
-              <p className="text-xs text-zinc-400">
-                Import, re-orient, scale, bake, and compress models with Google Draco into lightweight GLB
-              </p>
-            </div>
+            {/* Mobile Exit Button */}
+            <button
+              type="button"
+              onClick={onClose}
+              className="sm:hidden px-3 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5"
+            >
+              <X className="w-3.5 h-3.5 stroke-[2.5]" />
+              <span>Exit</span>
+            </button>
           </div>
 
           {/* TAB NAVIGATOR */}
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-zinc-950 border border-zinc-800">
+          <div className="flex items-center gap-1 p-1 rounded-xl bg-zinc-950 border border-zinc-800 overflow-x-auto no-scrollbar">
             <button
+              type="button"
               onClick={() => setActiveTab('preview_transform')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
                 activeTab === 'preview_transform'
                   ? 'bg-white text-zinc-950 font-bold shadow-sm'
                   : 'text-zinc-400 hover:text-white'
               }`}
             >
-              <Box className="w-3.5 h-3.5" />
-              Viewport & Transform
+              Transform & View
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab('compression_export')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
                 activeTab === 'compression_export'
                   ? 'bg-white text-zinc-950 font-bold shadow-sm'
                   : 'text-zinc-400 hover:text-white'
               }`}
             >
-              <Zap className="w-3.5 h-3.5" />
               Draco Compression
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab('inspector')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
                 activeTab === 'inspector'
                   ? 'bg-white text-zinc-950 font-bold shadow-sm'
                   : 'text-zinc-400 hover:text-white'
               }`}
             >
-              <Layers className="w-3.5 h-3.5" />
-              Hierarchy & Metrics
+              Metrics & Mesh
             </button>
             <button
+              type="button"
               onClick={() => {
                 setActiveTab('saved_storage');
                 refreshSavedModels();
               }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all relative ${
+              className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-colors flex items-center gap-1.5 ${
                 activeTab === 'saved_storage'
                   ? 'bg-white text-zinc-950 font-bold shadow-sm'
                   : 'text-zinc-400 hover:text-white'
               }`}
             >
-              <HardDrive className="w-3.5 h-3.5" />
-              In-App Storage ({savedModels.length})
+              <span>Saved Models</span>
               {savedModels.length > 0 && (
-                <span className="w-2 h-2 rounded-full bg-white" />
+                <span className="px-1.5 py-0.2 text-[10px] rounded-full bg-white/20 text-zinc-200">
+                  {savedModels.length}
+                </span>
               )}
             </button>
           </div>
 
+          {/* Desktop Exit Button */}
           <button
+            type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+            className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/10 transition-colors cursor-pointer"
+            title="Exit Converter (Esc)"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4 stroke-[2.5]" />
+            <span>Exit</span>
           </button>
         </div>
 

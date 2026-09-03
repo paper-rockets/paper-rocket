@@ -353,6 +353,11 @@ export const PaperRocketTactileWheel: React.FC<FeatherTactileWheelProps> = ({
     window.addEventListener('pointerup', handlePointerUp);
   };
 
+  // Inverted Dimple Rotation State
+  const [puckRotationDeg, setPuckRotationDeg] = useState(0);
+  const [isDraggingDimple, setIsDraggingDimple] = useState(false);
+  const dimpleDragOriginRef = useRef<{ cx: number; cy: number; startAngle: number; lastAngle: number } | null>(null);
+
   const handleScaleCycle = () => {
     const scales = [0.6, 0.75, 0.85, 1.0, 1.15];
     const currentIdx = scales.findIndex((s) => Math.abs(s - scaleFactor) < 0.05);
@@ -480,6 +485,73 @@ export const PaperRocketTactileWheel: React.FC<FeatherTactileWheelProps> = ({
       return 'Wheel Dial • Slide circle to change size';
     }
     return 'Tactile Spatial Wheel';
+  };
+
+  // Inverted Dimple pointer rotation handlers
+  const handleDimplePointerDown = (e: React.PointerEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingDimple(true);
+    playHapticSound('click', soundEnabled);
+    engine?.beginTransform(targetScope);
+
+    const target = e.currentTarget;
+    try {
+      target.setPointerCapture(e.pointerId);
+    } catch {}
+
+    const rect = target.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const startAngle = (Math.atan2(e.clientY - cy, e.clientX - cx) * 180) / Math.PI;
+
+    dimpleDragOriginRef.current = { cx, cy, startAngle, lastAngle: startAngle };
+  };
+
+  const handleDimplePointerMove = (e: React.PointerEvent) => {
+    if (!isDraggingDimple || !dimpleDragOriginRef.current) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    const { cx, cy, lastAngle } = dimpleDragOriginRef.current;
+    const currentAngle = (Math.atan2(e.clientY - cy, e.clientX - cx) * 180) / Math.PI;
+    let deltaAngle = currentAngle - lastAngle;
+
+    if (deltaAngle > 180) deltaAngle -= 360;
+    if (deltaAngle < -180) deltaAngle += 360;
+
+    dimpleDragOriginRef.current.lastAngle = currentAngle;
+    setPuckRotationDeg((prev) => (prev + deltaAngle) % 360);
+
+    const deltaRad = (deltaAngle * Math.PI) / 180;
+    if (mode === '3d') {
+      engine?.rotateTrackball(deltaAngle * 1.2, 0, targetScope);
+    } else {
+      engine?.rotateScreenSpace(deltaRad, targetScope);
+    }
+
+    onUpdateSpatial((prev) => ({
+      ...prev,
+      yaw: (prev.yaw + deltaAngle) % 360,
+    }));
+
+    const totalDeg = Math.round(puckRotationDeg + deltaAngle);
+    setDragValueLabel(`${totalDeg >= 0 ? '+' : ''}${totalDeg}° ↻`);
+  };
+
+  const handleDimplePointerUp = (e: React.PointerEvent) => {
+    if (isDraggingDimple) {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDraggingDimple(false);
+      dimpleDragOriginRef.current = null;
+      setDragValueLabel(null);
+      playHapticSound('snap', soundEnabled);
+      engine?.endTransform();
+      try {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      } catch {}
+    }
   };
 
   // Joystick pointer handlers with normalized, pixel-independent coordinate math
@@ -1051,46 +1123,60 @@ export const PaperRocketTactileWheel: React.FC<FeatherTactileWheelProps> = ({
               isBiggerUI ? 'w-40 h-40' : 'w-28 h-28'
             } rounded-full flex items-center justify-center cursor-grab active:cursor-grabbing z-20`}
           >
-            {/* Colorful 3-Axis Petals (persisted in DOM to avoid pointer-capture unmount cancellation) */}
+            {/* Colorful 4-Directional Petals */}
             <div
               className={`absolute inset-0 flex items-center justify-center transition-opacity duration-150 ${
                 isDraggingJoystick ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'
               }`}
             >
-              {/* Top/Green Petal (Elevation Y) */}
+              {/* Top/Green Petal (+Y Elevation Up) */}
               <button
-                id="petal-green-y"
+                id="petal-green-y-top"
+                type="button"
                 onPointerDown={(e) => handleJoystickDown(e, 'y')}
                 className={`absolute ${
                   isBiggerUI ? '-top-1.5 w-6 h-10' : '-top-1 w-5 h-8'
                 } rounded-full bg-[#22c55e] hover:brightness-125 transition-all shadow-md cursor-pointer`}
-                title="Move Y (Elevation)"
+                title="Move Y (Up)"
               />
 
-              {/* Left/Pink Petal (Lateral X) */}
+              {/* Bottom/Green Petal (-Y Elevation Down) */}
               <button
-                id="petal-pink-x"
+                id="petal-green-y-bottom"
+                type="button"
+                onPointerDown={(e) => handleJoystickDown(e, 'y')}
+                className={`absolute ${
+                  isBiggerUI ? '-bottom-1.5 w-6 h-10' : '-bottom-1 w-5 h-8'
+                } rounded-full bg-[#22c55e] hover:brightness-125 transition-all shadow-md cursor-pointer`}
+                title="Move Y (Down)"
+              />
+
+              {/* Left/Pink Petal (-X Lateral Left) */}
+              <button
+                id="petal-pink-x-left"
+                type="button"
                 onPointerDown={(e) => handleJoystickDown(e, 'x')}
                 className={`absolute ${
                   isBiggerUI ? '-left-1.5 w-10 h-6' : '-left-1 w-8 h-5'
                 } rounded-full bg-[#ec4899] hover:brightness-125 transition-all shadow-md cursor-pointer`}
-                title="Move X (Lateral)"
+                title="Move X (Left)"
               />
 
-              {/* Right/Blue Petal (Depth Z in 3D mode) */}
-              {mode === '3d' && (
-                <button
-                  id="petal-blue-z"
-                  onPointerDown={(e) => handleJoystickDown(e, 'z')}
-                  className={`absolute ${
-                    isBiggerUI ? '-right-1.5 w-10 h-6' : '-right-1 w-8 h-5'
-                  } rounded-full bg-[#3b82f6] hover:brightness-125 transition-all shadow-md cursor-pointer`}
-                  title="Move Z (Depth)"
-                />
-              )}
+              {/* Right Petal: Pink for +X Lateral Right in 2D mode, Blue for Z Depth in 3D mode */}
+              <button
+                id="petal-right-axis"
+                type="button"
+                onPointerDown={(e) => handleJoystickDown(e, mode === '3d' ? 'z' : 'x')}
+                className={`absolute ${
+                  isBiggerUI ? '-right-1.5 w-10 h-6' : '-right-1 w-8 h-5'
+                } rounded-full ${
+                  mode === '3d' ? 'bg-[#3b82f6]' : 'bg-[#ec4899]'
+                } hover:brightness-125 transition-all shadow-md cursor-pointer`}
+                title={mode === '3d' ? 'Move Z (Depth)' : 'Move X (Right)'}
+              />
             </div>
 
-            {/* Elastic White Center Puck with 3D Dome Shading */}
+            {/* Elastic White Center Puck with 3D Dome Shading & Inverted Dimple */}
             <motion.div
               id="feather-center-white-puck"
               style={{
@@ -1098,8 +1184,8 @@ export const PaperRocketTactileWheel: React.FC<FeatherTactileWheelProps> = ({
                 y: springY,
               }}
               animate={{
-                scale: isDraggingJoystick ? 1.08 : 1,
-                boxShadow: isDraggingJoystick
+                scale: isDraggingJoystick || isDraggingDimple ? 1.08 : 1,
+                boxShadow: isDraggingJoystick || isDraggingDimple
                   ? '0 0 35px rgba(255, 255, 255, 0.9), 0 12px 28px rgba(0,0,0,0.6)'
                   : '0 8px 20px rgba(0,0,0,0.45), inset 0 2px 2px rgba(255,255,255,0.8), inset 0 -3px 6px rgba(0,0,0,0.2)',
               }}
@@ -1107,14 +1193,33 @@ export const PaperRocketTactileWheel: React.FC<FeatherTactileWheelProps> = ({
                 isBiggerUI ? 'w-16 h-16 min-w-[48px] min-h-[48px]' : 'w-12 h-12 min-w-[40px] min-h-[40px]'
               } rounded-full bg-[radial-gradient(circle_at_35%_30%,#ffffff_0%,#f8fafc_50%,#cbd5e1_100%)] border border-white/60 text-neutral-900 font-bold flex items-center justify-center text-xs shadow-xl cursor-grab active:cursor-grabbing select-none`}
             >
-              {/* Dynamic metric label inside puck like in the video */}
-              {isDraggingJoystick && dragValueLabel ? (
+              {/* Dynamic metric label inside puck */}
+              {(isDraggingJoystick || isDraggingDimple) && dragValueLabel ? (
                 <span className="text-[10px] sm:text-[11px] font-extrabold tracking-tight text-neutral-950 animate-pulse">
                   {dragValueLabel}
                 </span>
               ) : (
-                <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-neutral-900/20 shadow-inner flex items-center justify-center">
-                  <div className="w-1.5 h-1.5 rounded-full bg-neutral-900 shadow-sm" />
+                /* Tactile Inverted Dimple for Rotation */
+                <div
+                  id="tactile-inverted-dimple"
+                  onPointerDown={handleDimplePointerDown}
+                  onPointerMove={handleDimplePointerMove}
+                  onPointerUp={handleDimplePointerUp}
+                  onPointerCancel={handleDimplePointerUp}
+                  style={{
+                    transform: `rotate(${puckRotationDeg}deg)`,
+                  }}
+                  className={`relative ${
+                    isBiggerUI ? 'w-8 h-8' : 'w-6 h-6'
+                  } rounded-full bg-gradient-to-b from-neutral-400/40 via-neutral-300/30 to-neutral-200/50 shadow-[inset_0_3px_6px_rgba(0,0,0,0.5),0_1px_1px_rgba(255,255,255,0.8)] border border-neutral-400/50 flex items-center justify-center cursor-grab active:cursor-grabbing touch-none`}
+                  title="Inverted Dimple (Drag/Twist to Rotate)"
+                >
+                  {/* Inner Concentric Recessed Pit */}
+                  <div className="w-3 h-3 rounded-full bg-neutral-900/20 shadow-inner flex items-center justify-center pointer-events-none">
+                    <div className="w-1.5 h-1.5 rounded-full bg-neutral-800 shadow-sm" />
+                  </div>
+                  {/* Top Cyan Rotation Pip Indicator */}
+                  <div className="absolute top-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-cyan-500 shadow-sm pointer-events-none" />
                 </div>
               )}
             </motion.div>

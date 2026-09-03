@@ -471,16 +471,17 @@ export const TwoDimensionalDial: React.FC<TwoDimensionalDialProps> = ({
         transition={{ type: 'spring', stiffness: 500, damping: 28 }}
         className={`relative z-20 ${centerStickSize} rounded-full bg-gradient-to-b from-[#2a2a2e] to-[#1c1c1f] border-2 flex flex-col items-center justify-center cursor-grab active:cursor-grabbing touch-none select-none`}
       >
-        {/* Inner Tactile Ring */}
-        <div className="w-[82%] h-[82%] rounded-full bg-[#18181a] border border-white/10 flex flex-col items-center justify-center text-zinc-300">
+        {/* Inner Tactile Inverted Dimple */}
+        <div className="w-[82%] h-[82%] rounded-full bg-gradient-to-b from-[#161619] via-[#1c1c20] to-[#25252b] border border-white/10 shadow-[inset_0_3px_8px_rgba(0,0,0,0.6)] flex flex-col items-center justify-center text-zinc-300 relative">
           <Move
-            className={`w-4 h-4 transition-transform duration-150 ${
-              isStickDragging ? 'text-emerald-400 scale-110' : 'text-zinc-200'
+            className={`w-3.5 h-3.5 transition-transform duration-150 ${
+              isStickDragging ? 'text-emerald-400 scale-110' : 'text-zinc-300'
             }`}
           />
-          <span className="text-[8.5px] font-bold tracking-wider mt-0.5 text-zinc-400">
-            MOVE
-          </span>
+          {/* Recessed Center Micro-Dimple Pit */}
+          <div className="w-2.5 h-2.5 rounded-full bg-black/40 border border-white/10 shadow-inner flex items-center justify-center mt-0.5">
+            <div className="w-1 h-1 rounded-full bg-white/60" />
+          </div>
         </div>
       </motion.div>
 
