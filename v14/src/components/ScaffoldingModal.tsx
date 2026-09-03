@@ -44,43 +44,43 @@ const PROXIES: Array<{
   type: ScaffoldProxyType;
   label: string;
   desc: string;
-  icon: React.FC<{ className?: string }>;
+  tag: string;
 }> = [
   {
     type: 'mannequin_torso',
     label: 'Mannequin Torso',
     desc: 'Anatomical ribcage, pelvis, spine & shoulder joints',
-    icon: User,
+    tag: 'ANATOMY',
   },
   {
     type: 'head_sphere',
     label: 'Loomis Head Cage',
     desc: 'Cranial sphere, eye ring & jaw box guides',
-    icon: Circle,
+    tag: 'HEAD',
   },
   {
     type: 'car_chassis',
     label: 'Vehicle Chassis',
     desc: 'Aerodynamic cabin, hood & 4 wheel arch colliders',
-    icon: Car,
+    tag: 'VEHICLE',
   },
   {
     type: 'cylinder_limb',
     label: 'Limb Armature',
     desc: 'Shoulder/elbow ball joints & tapered bone cylinders',
-    icon: Activity,
+    tag: 'LIMBS',
   },
   {
     type: 'dome_column',
     label: 'Dome & Column',
     desc: 'Pedestal, fluted shaft, capital & hemisphere dome',
-    icon: Cube,
+    tag: 'ARCH',
   },
   {
     type: 'capsule',
     label: 'Organic Capsule',
     desc: 'Smooth curved capsule scaffold for organic sculpts',
-    icon: Sparkles,
+    tag: 'ORGANIC',
   },
 ];
 
@@ -191,109 +191,111 @@ export const ScaffoldingModal: React.FC<ScaffoldingModalProps> = ({
 
   return (
     <div
-      id="mody-scaffolding-modal"
-      className="fixed top-16 left-4 sm:left-24 z-30 w-84 sm:w-96 select-none shadow-2xl rounded-2xl border backdrop-blur-2xl p-4 space-y-3 font-sans animate-in fade-in slide-in-from-left-2 duration-150 bg-[#18191d]/98 border-[#2c2e36] text-neutral-200 max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-700"
+      id="mody-scaffolding-backdrop"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md select-none font-sans animate-in fade-in duration-150"
+      onClick={onClose}
     >
-      {/* Header */}
-      <div className="flex items-center justify-between pb-2 border-b border-neutral-800">
-        <div className="flex items-center gap-2">
-          <Shield className="w-4 h-4 text-cyan-400" />
-          <span className="text-xs font-bold uppercase tracking-wider text-neutral-200">
-            3D Collision Guides & Scaffolding
-          </span>
+      <div
+        id="mody-scaffolding-modal"
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-md bg-[#18191d] border border-[#2c2e36] text-neutral-200 rounded-2xl shadow-2xl p-4 sm:p-5 space-y-3 max-h-[88vh] overflow-y-auto"
+      >
+        {/* Header with high contrast exit button */}
+        <div className="flex items-center justify-between pb-2 border-b border-neutral-800">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-white">
+              3D Collision Guides & Scaffolding
+            </span>
+          </div>
+          <button
+            onClick={onClose}
+            className="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-1 border border-white/10 transition-colors cursor-pointer"
+            title="Exit (Esc)"
+          >
+            <X className="w-3.5 h-3.5" />
+            <span>Exit</span>
+          </button>
         </div>
-        <button
-          onClick={onClose}
-          className="p-1 rounded-lg hover:bg-neutral-800 text-neutral-400 hover:text-white"
-        >
-          <X className="w-3.5 h-3.5" />
-        </button>
-      </div>
 
-      <p className="text-[11px] text-neutral-400 leading-relaxed">
-        Import or generate lightweight 3D armatures flagged as non-editable collision guides. Subsequent strokes snap and shrink-wrap directly across their topology.
-      </p>
+        <p className="text-[11px] text-neutral-400 leading-relaxed">
+          Import or generate lightweight 3D armatures flagged as non-editable collision guides. Subsequent strokes snap and shrink-wrap directly across their topology.
+        </p>
 
-      {/* Tabs */}
-      <div className="grid grid-cols-3 gap-1 p-0.5 rounded-xl bg-neutral-900 border border-neutral-800 text-xs font-semibold">
-        <button
-          onClick={() => setActiveTab('proxies')}
-          className={`py-1.5 px-2 rounded-lg transition-all ${
-            activeTab === 'proxies'
-              ? 'bg-cyan-600 text-white shadow'
-              : 'text-neutral-400 hover:text-white'
-          }`}
-        >
-          Armatures
-        </button>
-        <button
-          onClick={() => setActiveTab('primitives')}
-          className={`py-1.5 px-2 rounded-lg transition-all ${
-            activeTab === 'primitives'
-              ? 'bg-cyan-600 text-white shadow'
-              : 'text-neutral-400 hover:text-white'
-          }`}
-        >
-          Primitives
-        </button>
-        <button
-          onClick={() => setActiveTab('active_scaffolds')}
-          className={`py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 ${
-            activeTab === 'active_scaffolds'
-              ? 'bg-cyan-600 text-white shadow'
-              : 'text-neutral-400 hover:text-white'
-          }`}
-        >
-          <span>Active</span>
-          <span className="px-1 py-0.2 rounded-full text-[9px] bg-neutral-800 font-mono">
-            {scaffolds.length}
-          </span>
-        </button>
-      </div>
+        {/* Tabs */}
+        <div className="grid grid-cols-3 gap-1 p-0.5 rounded-xl bg-neutral-900 border border-neutral-800 text-xs font-semibold">
+          <button
+            onClick={() => setActiveTab('proxies')}
+            className={`py-1.5 px-2 rounded-lg transition-all ${
+              activeTab === 'proxies'
+                ? 'bg-white text-zinc-950 font-bold shadow'
+                : 'text-neutral-400 hover:text-white'
+            }`}
+          >
+            Armatures
+          </button>
+          <button
+            onClick={() => setActiveTab('primitives')}
+            className={`py-1.5 px-2 rounded-lg transition-all ${
+              activeTab === 'primitives'
+                ? 'bg-white text-zinc-950 font-bold shadow'
+                : 'text-neutral-400 hover:text-white'
+            }`}
+          >
+            Primitives
+          </button>
+          <button
+            onClick={() => setActiveTab('active_scaffolds')}
+            className={`py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 ${
+              activeTab === 'active_scaffolds'
+                ? 'bg-white text-zinc-950 font-bold shadow'
+                : 'text-neutral-400 hover:text-white'
+            }`}
+          >
+            <span>Active</span>
+            <span className="px-1 py-0.2 rounded-full text-[9px] bg-neutral-800 font-mono">
+              {scaffolds.length}
+            </span>
+          </button>
+        </div>
 
-      {/* TAB 1: PROCEDURAL PROXY ARMATURES */}
-      {activeTab === 'proxies' && (
-        <div className="space-y-3 pt-1">
-          <div className="grid grid-cols-2 gap-2">
-            {PROXIES.map((p) => {
-              const Icon = p.icon;
-              return (
+        {/* TAB 1: PROCEDURAL PROXY ARMATURES */}
+        {activeTab === 'proxies' && (
+          <div className="space-y-3 pt-1">
+            <div className="grid grid-cols-2 gap-2">
+              {PROXIES.map((p) => (
                 <button
                   key={p.type}
                   onClick={() => handleSpawnProxy(p.type)}
-                  className="p-2.5 rounded-xl bg-neutral-900/90 border border-neutral-800 hover:border-cyan-500/60 hover:bg-neutral-850 text-left space-y-1 group transition-all"
+                  className="p-2.5 rounded-xl bg-[#141519] border border-neutral-800 hover:border-zinc-500 hover:bg-[#1a1c23] text-left space-y-1 group transition-all cursor-pointer"
                 >
-                  <div className="flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg bg-cyan-950/60 text-cyan-400 group-hover:scale-110 transition-transform">
-                      <Icon className="w-4 h-4" />
-                    </div>
-                    <span className="text-xs font-bold text-neutral-200">{p.label}</span>
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-xs font-bold text-white group-hover:text-sky-300 transition-colors">{p.label}</span>
+                    <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-neutral-800 text-zinc-400 font-semibold">{p.tag}</span>
                   </div>
                   <p className="text-[10px] text-neutral-400 leading-tight">{p.desc}</p>
                 </button>
-              );
-            })}
-          </div>
+              ))}
+            </div>
 
-          {/* Import Custom Non-Editable Collision Mesh */}
-          <div className="pt-2 border-t border-neutral-800">
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="w-full py-2 px-3 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-dashed border-neutral-700 text-neutral-300 text-xs font-semibold flex items-center justify-center gap-2 transition-colors"
-            >
-              <Upload className="w-4 h-4 text-cyan-400" />
-              <span>Import OBJ / GLTF as Collision Guide</span>
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".obj,.gltf,.glb,.fbx"
-              onChange={handleImportCollisionMesh}
-              className="hidden"
-            />
+            {/* Import Custom Non-Editable Collision Mesh */}
+            <div className="pt-2 border-t border-neutral-800">
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full py-2 px-3 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-dashed border-neutral-700 text-neutral-300 text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+              >
+                <Upload className="w-4 h-4 text-sky-400" />
+                <span>Import OBJ / GLTF as Collision Guide</span>
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".obj,.gltf,.glb,.fbx"
+                onChange={handleImportCollisionMesh}
+                className="hidden"
+              />
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
       {/* TAB 2: PROCEDURAL PRIMITIVE TOPOLOGY SLIDERS */}
       {activeTab === 'primitives' && (
@@ -566,6 +568,7 @@ export const ScaffoldingModal: React.FC<ScaffoldingModalProps> = ({
           )}
         </div>
       )}
+      </div>
     </div>
   );
 };

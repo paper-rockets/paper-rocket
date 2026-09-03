@@ -60,6 +60,7 @@ import {
   Sparkles,
   Zap,
   Sliders,
+  Activity,
   Volume2,
   VolumeX,
   Touchpad,
@@ -1019,7 +1020,7 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
                 title="Open Advanced Pro CAD Tools (Lofts, Decimation, Armatures, Liquify)"
               >
                 <div className="flex items-center gap-1.5">
-                  <Wand2 className="w-3.5 h-3.5 stroke-[1.8]" />
+                  <Sliders className="w-3.5 h-3.5 stroke-[1.8]" />
                   <span className="text-[11px] font-medium">Pro Tools</span>
                 </div>
                 <ChevronRight className={`w-3.5 h-3.5 transition-transform ${showProDrawer ? 'rotate-90' : ''}`} />
@@ -1075,7 +1076,7 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
                       onClick={onOpenLiquify}
                       className="px-2 py-1 text-left text-[11px] text-zinc-300 hover:text-white hover:bg-white/10 rounded-lg flex items-center gap-2 cursor-pointer"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                      <Activity className="w-3.5 h-3.5 text-purple-400" />
                       <span>Volumetric Liquify</span>
                     </button>
                   )}
@@ -1096,7 +1097,7 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
                       className="px-2 py-1 text-left text-[11px] text-zinc-300 hover:text-white hover:bg-white/10 rounded-lg flex items-center gap-2 cursor-pointer"
                       title="100+ Live Shaders, MatCaps & Materials Studio"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                      <Layers className="w-3.5 h-3.5 text-purple-400" />
                       <span>Shaders & MatCaps (100+)</span>
                     </button>
                   )}
@@ -1416,12 +1417,12 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
           </div>
 
           {/* ========================================================================= */}
-          {/* HORIZONTAL FLYOUT SHELF 1: 3D PRIMITIVES (EXPANDS TO THE RIGHT)            */}
+          {/* HORIZONTAL FLYOUT SHELF 1: 3D PRIMITIVES SPAWNER                          */}
           {/* ========================================================================= */}
           {showPrimitivesMenu && (
             <div
               id="mody-primitives-flyout-menu"
-              className={`absolute left-full top-0 ml-2.5 w-52 p-2.5 rounded-2xl border z-50 flex flex-col gap-1.5 text-xs select-none ${
+              className={`fixed sm:absolute inset-x-2 sm:inset-x-auto sm:left-full top-14 sm:top-0 sm:ml-2.5 w-auto sm:w-52 p-2.5 rounded-2xl border z-50 flex flex-col gap-1.5 text-xs select-none max-h-[82vh] overflow-y-auto shadow-2xl ${
                 theme === 'light'
                   ? 'bg-white border-neutral-200 text-neutral-800'
                   : 'bg-[#18191d] border-[#2b2c32] text-zinc-200'
@@ -1475,7 +1476,7 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
           {showBrushShelf && (
             <div
               id="mody-brush-shelf-flyout"
-              className={`absolute left-full top-0 ml-2.5 w-64 sm:w-72 p-3 rounded-2xl border z-50 flex flex-col gap-2.5 text-xs select-none ${
+              className={`fixed sm:absolute inset-x-2 sm:inset-x-auto sm:left-full top-14 sm:top-0 sm:ml-2.5 w-auto sm:w-72 p-3 rounded-2xl border z-50 flex flex-col gap-2.5 text-xs select-none max-h-[82vh] overflow-y-auto shadow-2xl ${
                 theme === 'light'
                   ? 'bg-white border-neutral-200 text-neutral-800'
                   : 'bg-[#18191d] border-[#2b2c32] text-zinc-200'
@@ -1660,7 +1661,7 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
           {showSceneShelf && (
             <div
               id="mody-scene-shelf-flyout"
-              className={`absolute left-full top-0 ml-2.5 w-64 sm:w-72 p-3 rounded-2xl border z-50 flex flex-col gap-2.5 text-xs select-none ${
+              className={`fixed sm:absolute inset-x-2 sm:inset-x-auto sm:left-full top-14 sm:top-0 sm:ml-2.5 w-auto sm:w-72 p-3 rounded-2xl border z-50 flex flex-col gap-2.5 text-xs select-none max-h-[82vh] overflow-y-auto shadow-2xl ${
                 theme === 'light'
                   ? 'bg-white border-neutral-200 text-neutral-800'
                   : 'bg-[#18191d] border-[#2b2c32] text-zinc-200'
@@ -1915,7 +1916,7 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
                       }}
                       className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left text-[10.5px] hover:bg-white/10 text-zinc-300 hover:text-white"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                      <Layers className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
                       <span>Post-Processing Shaders</span>
                     </button>
                   )}
@@ -1928,7 +1929,7 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
                       }}
                       className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left text-[10.5px] hover:bg-white/10 text-zinc-300 hover:text-white"
                     >
-                      <Wand2 className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                      <Activity className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
                       <span>Volumetric Liquify</span>
                     </button>
                   )}
@@ -2021,7 +2022,7 @@ export const ToolbarComponent: React.FC<ToolbarProps> = ({
           {showSettingsShelf && (
             <div
               id="mody-settings-shelf-flyout"
-              className={`absolute left-full top-0 ml-2.5 w-60 sm:w-64 p-3 rounded-2xl border z-50 flex flex-col gap-2.5 text-xs select-none ${
+              className={`fixed sm:absolute inset-x-2 sm:inset-x-auto sm:left-full top-14 sm:top-0 sm:ml-2.5 w-auto sm:w-64 p-3 rounded-2xl border z-50 flex flex-col gap-2.5 text-xs select-none max-h-[82vh] overflow-y-auto shadow-2xl ${
                 theme === 'light'
                   ? 'bg-white border-neutral-200 text-neutral-800'
                   : 'bg-[#18191d] border-[#2b2c32] text-zinc-200'

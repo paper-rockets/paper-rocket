@@ -310,10 +310,10 @@ export const StylusRadialMenu: React.FC<StylusRadialMenuProps> = ({
         {/* Submenu Popout: Color Palette */}
         {activeSubmenu === 'colors' && (
           <div
-            className={`absolute top-1/2 left-1/2 -translate-y-1/2 translate-x-24 z-30 p-2.5 rounded-2xl shadow-2xl border backdrop-blur-xl flex flex-col gap-2 animate-in fade-in slide-in-from-left-4 duration-150 ${
+            className={`absolute top-full sm:top-1/2 left-1/2 -translate-x-1/2 sm:translate-x-24 sm:-translate-y-1/2 mt-3 sm:mt-0 z-30 p-2.5 rounded-2xl shadow-2xl border backdrop-blur-xl flex flex-col gap-2 animate-in fade-in zoom-in-95 duration-150 ${
               isDark ? 'bg-neutral-900/95 border-neutral-700' : 'bg-white/95 border-neutral-200'
             }`}
-            style={{ width: '160px' }}
+            style={{ width: '160px', maxWidth: 'calc(100vw - 32px)' }}
           >
             <div className="text-[10px] font-semibold tracking-wider uppercase text-neutral-400 px-1">
               Quick Swatches
@@ -343,10 +343,9 @@ export const StylusRadialMenu: React.FC<StylusRadialMenuProps> = ({
                   onClose();
                   onOpenColorPanel();
                 }}
-                className="w-full py-1 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center gap-1 mt-1 transition-colors"
+                className="w-full py-1 rounded-lg text-xs font-semibold bg-white text-zinc-950 flex items-center justify-center gap-1 mt-1 transition-colors font-bold"
               >
-                <Palette className="w-3.5 h-3.5" />
-                <span>Full OKLab Color</span>
+                <span>Full Color Studio</span>
               </button>
             )}
           </div>
@@ -355,10 +354,10 @@ export const StylusRadialMenu: React.FC<StylusRadialMenuProps> = ({
         {/* Submenu Popout: Brush Size */}
         {activeSubmenu === 'size' && (
           <div
-            className={`absolute top-1/2 left-1/2 -translate-y-1/2 translate-x-24 z-30 p-3 rounded-2xl shadow-2xl border backdrop-blur-xl flex flex-col gap-2.5 animate-in fade-in slide-in-from-left-4 duration-150 ${
+            className={`absolute top-full sm:top-1/2 left-1/2 -translate-x-1/2 sm:translate-x-24 sm:-translate-y-1/2 mt-3 sm:mt-0 z-30 p-3 rounded-2xl shadow-2xl border backdrop-blur-xl flex flex-col gap-2.5 animate-in fade-in zoom-in-95 duration-150 ${
               isDark ? 'bg-neutral-900/95 border-neutral-700' : 'bg-white/95 border-neutral-200'
             }`}
-            style={{ width: '180px' }}
+            style={{ width: '180px', maxWidth: 'calc(100vw - 32px)' }}
           >
             <div className="flex items-center justify-between text-[11px] font-semibold text-neutral-400">
               <span>Stroke Radius</span>
@@ -378,7 +377,7 @@ export const StylusRadialMenu: React.FC<StylusRadialMenuProps> = ({
                     onClose();
                   }
                 }}
-                className="flex items-center gap-0.5 font-mono text-indigo-400 hover:text-indigo-300 underline"
+                className="flex items-center gap-0.5 font-mono text-sky-400 hover:text-sky-300 underline"
               >
                 <Hash className="w-2.5 h-2.5" />
                 <span>{(brushSettings.size * 1000).toFixed(1)}mm</span>
@@ -393,7 +392,7 @@ export const StylusRadialMenu: React.FC<StylusRadialMenuProps> = ({
               onChange={(e) => {
                 onUpdateBrushSettings({ size: parseFloat(e.target.value) });
               }}
-              className="w-full h-2 bg-neutral-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+              className="w-full h-2 bg-neutral-700 rounded-lg appearance-none cursor-pointer accent-white"
             />
             <div className="grid grid-cols-4 gap-1">
               {[0.005, 0.015, 0.035, 0.08].map((s) => (
@@ -405,7 +404,7 @@ export const StylusRadialMenu: React.FC<StylusRadialMenuProps> = ({
                   }}
                   className={`py-1 rounded-lg text-[10px] font-mono font-semibold border ${
                     Math.abs(brushSettings.size - s) < 0.001
-                      ? 'bg-indigo-600 border-indigo-400 text-white'
+                      ? 'bg-white text-zinc-950 font-bold border-white'
                       : isDark
                       ? 'bg-neutral-800 border-neutral-700 text-neutral-300'
                       : 'bg-neutral-100 border-neutral-300 text-neutral-700'
@@ -421,10 +420,10 @@ export const StylusRadialMenu: React.FC<StylusRadialMenuProps> = ({
         {/* Submenu Popout: Symmetry Modes */}
         {activeSubmenu === 'symmetry' && (
           <div
-            className={`absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-[260px] z-30 p-2.5 rounded-2xl shadow-2xl border backdrop-blur-xl flex flex-col gap-1 animate-in fade-in slide-in-from-right-4 duration-150 ${
-              isDark ? 'bg-neutral-900/95 border-neutral-700' : 'bg-white/95 border-neutral-200'
+            className={`absolute top-full sm:top-1/2 left-1/2 -translate-x-1/2 sm:-translate-x-[220px] sm:-translate-y-1/2 mt-3 sm:mt-0 z-30 p-2.5 rounded-2xl shadow-2xl border backdrop-blur-xl flex flex-col gap-1 animate-in fade-in zoom-in-95 duration-150 ${
+              isDark ? 'bg-neutral-900/98 border-neutral-700 text-white' : 'bg-white/98 border-neutral-200 text-neutral-800'
             }`}
-            style={{ width: '150px' }}
+            style={{ width: '160px', maxWidth: 'calc(100vw - 32px)' }}
           >
             <div className="text-[10px] font-semibold tracking-wider uppercase text-neutral-400 px-1 mb-1">
               Symmetry Mode

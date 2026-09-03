@@ -85,11 +85,11 @@ export const BrushSettingsPanelComponent: React.FC<BrushSettingsPanelProps> = ({
     },
   ];
 
-  const materialTypes: { id: MaterialType; label: string; desc: string; icon: any }[] = [
-    { id: 'shadeless', label: 'Flat Paint', desc: 'Unlit solid color unaffected by 3D lighting', icon: Palette },
-    { id: 'shaded', label: 'PBR Lit', desc: 'Physically-based surface reacting to lighting & roughness', icon: Zap },
-    { id: 'glow', label: 'Flat Glow', desc: 'Self-illuminated emissive tone for vibrant highlights', icon: Flame },
-    { id: 'cutout', label: 'Cutout Mask', desc: 'Negative space mask punching through paint', icon: Scissors },
+  const materialTypes: { id: MaterialType; label: string; desc: string; tag: string }[] = [
+    { id: 'shadeless', label: 'Flat Paint', desc: 'Unlit solid color unaffected by 3D lighting', tag: 'FLAT' },
+    { id: 'shaded', label: 'PBR Lit', desc: 'Physically-based surface reacting to lighting & roughness', tag: 'PBR' },
+    { id: 'glow', label: 'Flat Glow', desc: 'Self-illuminated emissive tone for vibrant highlights', tag: 'GLOW' },
+    { id: 'cutout', label: 'Cutout Mask', desc: 'Negative space mask punching through paint', tag: 'MASK' },
   ];
 
   const strokeProfiles: { id: StrokeProfile; label: string; desc: string }[] = [
@@ -102,28 +102,26 @@ export const BrushSettingsPanelComponent: React.FC<BrushSettingsPanelProps> = ({
   return createPortal(
     <div
       id="brush-settings-panel"
-      className={`fixed top-14 left-14 sm:left-[210px] z-50 w-[310px] sm:w-[330px] max-h-[calc(100vh-80px)] flex flex-col rounded-2xl shadow-2xl select-none overflow-hidden font-sans border transition-all animate-in fade-in zoom-in-95 duration-150 ${
+      className={`fixed inset-x-2 sm:inset-x-auto sm:left-[210px] top-12 sm:top-14 z-50 w-auto sm:w-[330px] max-h-[85vh] flex flex-col rounded-2xl shadow-2xl select-none overflow-hidden font-sans border transition-all animate-in fade-in zoom-in-95 duration-150 ${
         theme === 'light'
           ? 'bg-white/98 text-neutral-800 border-neutral-200 shadow-neutral-400/30'
           : 'bg-[#141519]/98 text-zinc-200 border-zinc-800 backdrop-blur-2xl shadow-black/80'
       }`}
     >
-      {/* Header */}
+      {/* Header with Prominent Exit Button */}
       <div className={`flex items-center justify-between px-4 py-3 border-b ${
         theme === 'light' ? 'border-neutral-200 bg-neutral-50' : 'border-zinc-800 bg-[#101115]'
       }`}>
-        <div className="flex items-center gap-2 font-semibold text-xs sm:text-sm">
-          <Sliders className={`w-4 h-4 ${theme === 'light' ? 'text-neutral-600' : 'text-zinc-400'}`} />
+        <div className="font-bold text-xs sm:text-sm text-white">
           <span>Brush Dynamics & Surface</span>
         </div>
         <button
           onClick={onClose}
-          className={`p-1.5 rounded-lg transition-colors ${
-            theme === 'light' ? 'hover:bg-neutral-200 text-neutral-500' : 'hover:bg-white/10 text-zinc-400 hover:text-white'
-          }`}
-          title="Close"
+          className="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-1 border border-white/10 transition-colors cursor-pointer"
+          title="Exit (Esc)"
         >
-          <X className="w-4 h-4" />
+          <X className="w-3.5 h-3.5" />
+          <span>Exit</span>
         </button>
       </div>
 
@@ -132,8 +130,7 @@ export const BrushSettingsPanelComponent: React.FC<BrushSettingsPanelProps> = ({
           {/* SECTION 1: Drawing Space & Attachment (High Priority) */}
           <div className="p-3.5 rounded-2xl bg-[#18191f] border border-zinc-800/90 space-y-2.5">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 font-semibold text-zinc-200">
-                <Compass className="w-3.5 h-3.5 text-zinc-400" />
+              <div className="font-semibold text-zinc-200">
                 <span>Drawing Space & Attachment</span>
               </div>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-900 border border-zinc-700 text-zinc-300">
@@ -195,8 +192,7 @@ export const BrushSettingsPanelComponent: React.FC<BrushSettingsPanelProps> = ({
           {/* SECTION 2: Material Shader Pipeline */}
           <div className="p-3.5 rounded-2xl bg-[#18191f] border border-zinc-800/90 space-y-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 font-semibold text-zinc-200">
-                <Palette className="w-3.5 h-3.5 text-zinc-400" />
+              <div className="font-semibold text-zinc-200">
                 <span>Material Shader Pipeline</span>
               </div>
               <span className="text-[10px] font-mono text-zinc-400 capitalize">
@@ -206,7 +202,6 @@ export const BrushSettingsPanelComponent: React.FC<BrushSettingsPanelProps> = ({
 
             <div className="grid grid-cols-2 gap-1.5">
               {materialTypes.map((mat) => {
-                const Icon = mat.icon;
                 const isSelected = (brushSettings.materialType || 'shadeless') === mat.id;
                 return (
                   <button
@@ -219,9 +214,9 @@ export const BrushSettingsPanelComponent: React.FC<BrushSettingsPanelProps> = ({
                         : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800'
                     }`}
                   >
-                    <div className="flex items-center gap-1.5 text-xs font-semibold">
-                      <Icon className={`w-3.5 h-3.5 ${isSelected ? 'text-zinc-950' : 'text-zinc-400'}`} />
-                      <span>{mat.label}</span>
+                    <div className="flex items-center justify-between w-full">
+                      <span className="text-xs font-bold">{mat.label}</span>
+                      <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-zinc-800 text-zinc-400 font-semibold">{mat.tag}</span>
                     </div>
                     <span className={`text-[10px] line-clamp-2 mt-0.5 leading-tight ${isSelected ? 'text-zinc-700 font-normal' : 'text-zinc-500'}`}>
                       {mat.desc}
@@ -234,8 +229,7 @@ export const BrushSettingsPanelComponent: React.FC<BrushSettingsPanelProps> = ({
             {/* Dynamic Shader FX */}
             <div className="pt-2.5 border-t border-zinc-800/80 space-y-1.5">
               <div className="flex items-center justify-between text-[11px]">
-                <span className="text-zinc-300 font-medium flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-zinc-400" />
+                <span className="text-zinc-300 font-medium">
                   <span>Dynamic Shader FX</span>
                 </span>
                 <span className="text-[10px] font-mono text-zinc-400">
@@ -310,8 +304,7 @@ export const BrushSettingsPanelComponent: React.FC<BrushSettingsPanelProps> = ({
 
           {/* SECTION 3: Brush Tip & 3D Geometry Profile */}
           <div className="p-3.5 rounded-2xl bg-[#18191f] border border-zinc-800/90 space-y-3">
-            <div className="flex items-center gap-1.5 font-semibold text-zinc-200">
-              <Shapes className="w-3.5 h-3.5 text-zinc-400" />
+            <div className="font-semibold text-zinc-200">
               <span>Brush Shape & 3D Profile</span>
             </div>
 

@@ -53,19 +53,20 @@ export const RenderSettingsPanelComponent: React.FC<RenderSettingsPanelProps> = 
   return (
     <div
       id="render-settings-panel"
-      className="fixed sm:absolute inset-x-3 sm:inset-x-auto top-14 sm:top-16 right-auto sm:right-6 bottom-20 sm:bottom-auto w-auto sm:w-96 max-h-[calc(100vh-120px)] sm:max-h-[82vh] flex flex-col p-4 rounded-2xl bg-neutral-900/95 backdrop-blur-2xl border border-neutral-800 shadow-2xl z-30 select-none animate-in fade-in zoom-in-95 duration-150 overflow-hidden"
+      className="fixed sm:absolute inset-x-3 sm:inset-x-auto top-14 sm:top-16 right-auto sm:right-6 bottom-20 sm:bottom-auto w-auto sm:w-96 max-h-[calc(100vh-120px)] sm:max-h-[82vh] flex flex-col p-4 rounded-2xl bg-[#141519]/98 backdrop-blur-2xl border border-neutral-800 shadow-2xl z-50 select-none animate-in fade-in zoom-in-95 duration-150 overflow-hidden"
     >
       {/* Header */}
       <div className="flex items-center justify-between pb-3 border-b border-neutral-800 shrink-0">
-        <div className="flex items-center gap-2 text-neutral-200 font-semibold text-sm">
-          <Wand2 className="w-4 h-4 text-emerald-400" />
+        <div className="text-white font-bold text-sm">
           <span>Render Mode & Shaders</span>
         </div>
         <button
           onClick={onClose}
-          className="p-1 rounded-lg hover:bg-neutral-800 text-neutral-400 hover:text-neutral-200 transition-colors"
+          className="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-1 border border-white/10 transition-colors cursor-pointer"
+          title="Exit (Esc)"
         >
-          <X className="w-4 h-4" />
+          <X className="w-3.5 h-3.5" />
+          <span>Exit</span>
         </button>
       </div>
 
@@ -107,8 +108,7 @@ export const RenderSettingsPanelComponent: React.FC<RenderSettingsPanelProps> = 
         {onOpenShaderStudio && (
           <div className="p-3 rounded-xl bg-gradient-to-r from-purple-950/40 via-indigo-950/30 to-sky-950/30 border border-purple-800/50 space-y-2">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 font-semibold text-purple-300">
-                <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+              <div className="font-semibold text-purple-300">
                 <span>100+ Live Shaders & MatCaps</span>
               </div>
               <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
