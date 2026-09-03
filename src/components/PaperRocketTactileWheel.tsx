@@ -487,11 +487,35 @@ export const PaperRocketTactileWheel: React.FC<FeatherTactileWheelProps> = ({
     return 'Tactile Spatial Wheel';
   };
 
+  const dimpleDownTimeRef = useRef<number>(0);
+  const dimpleMovedRef = useRef<boolean>(false);
+
+  // 1-Click 45-Degree Step Canvas Rotation Handler
+  const handleStepRotateCanvas = (deg: number = 45) => {
+    playHapticSound('click', soundEnabled);
+    setPuckRotationDeg((prev) => (prev + deg) % 360);
+    const rad = (deg * Math.PI) / 180;
+    if (mode === '3d') {
+      engine?.rotateTrackball(deg * 1.2, 0, targetScope);
+    } else {
+      engine?.rotateScreenSpace(rad, targetScope);
+    }
+    onUpdateSpatial((prev) => ({
+      ...prev,
+      yaw: (prev.yaw + deg) % 360,
+    }));
+    const totalDeg = Math.round((puckRotationDeg + deg) % 360);
+    setDragValueLabel(`${totalDeg >= 0 ? '+' : ''}${totalDeg}° ↻`);
+    setTimeout(() => setDragValueLabel(null), 1200);
+  };
+
   // Inverted Dimple pointer rotation handlers
   const handleDimplePointerDown = (e: React.PointerEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDraggingDimple(true);
+    dimpleDownTimeRef.current = performance.now();
+    dimpleMovedRef.current = false;
     playHapticSound('click', soundEnabled);
     engine?.beginTransform(targetScope);
 
@@ -516,6 +540,10 @@ export const PaperRocketTactileWheel: React.FC<FeatherTactileWheelProps> = ({
     const { cx, cy, lastAngle } = dimpleDragOriginRef.current;
     const currentAngle = (Math.atan2(e.clientY - cy, e.clientX - cx) * 180) / Math.PI;
     let deltaAngle = currentAngle - lastAngle;
+
+    if (Math.abs(deltaAngle) > 2) {
+      dimpleMovedRef.current = true;
+    }
 
     if (deltaAngle > 180) deltaAngle -= 360;
     if (deltaAngle < -180) deltaAngle += 360;
@@ -548,6 +576,13 @@ export const PaperRocketTactileWheel: React.FC<FeatherTactileWheelProps> = ({
       setDragValueLabel(null);
       playHapticSound('snap', soundEnabled);
       engine?.endTransform();
+
+      // Quick tap without dragging: auto step +45 degrees!
+      const pressDuration = performance.now() - dimpleDownTimeRef.current;
+      if (!dimpleMovedRef.current && pressDuration < 280) {
+        handleStepRotateCanvas(45);
+      }
+
       try {
         e.currentTarget.releasePointerCapture(e.pointerId);
       } catch {}
@@ -1068,7 +1103,7 @@ export const PaperRocketTactileWheel: React.FC<FeatherTactileWheelProps> = ({
           <div className="w-4 h-1.5 rounded-full bg-current opacity-80" />
         </motion.button>
 
-        {/* Right Arc Pill (Switch to 3D Sphere Roll) */}
+        {/* Right Arc Pill (Cycle to 45° Slider & 3D Globe) */}
         <motion.button
           id="submode-ball-pill"
           whileHover={{ scale: 1.1 }}
@@ -1077,16 +1112,17 @@ export const PaperRocketTactileWheel: React.FC<FeatherTactileWheelProps> = ({
           onClick={(e) => {
             e.stopPropagation();
             playHapticSound('click', soundEnabled);
-            setSubMode(subMode === 'ball' ? 'joystick' : 'ball');
+            setSubMode(subMode === 'slider' ? 'ball' : subMode === 'ball' ? 'joystick' : 'slider');
           }}
-          className={`absolute right-3 z-30 w-6 h-11 rounded-full border flex items-center justify-center transition-all ${
-            subMode === 'ball'
+          className={`absolute right-3 z-30 w-6 h-11 rounded-full border flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer ${
+            subMode === 'ball' || subMode === 'slider'
               ? 'bg-white text-neutral-950 border-white shadow-[0_0_12px_rgba(255,255,255,0.6)]'
               : 'bg-neutral-800/80 text-neutral-400 border-neutral-700/60 hover:text-white'
           }`}
-          title="3D Sphere Orientation Roll"
+          title={subMode === 'slider' ? 'Switch to 3D Globe' : subMode === 'ball' ? 'Switch to Joystick' : 'Switch to 45° Slider'}
         >
-          <div className="w-1.5 h-4 rounded-full bg-current opacity-80" />
+          <div className="w-1.5 h-1.5 rounded-full bg-current opacity-90" />
+          <div className="w-1.5 h-3 rounded-full bg-current opacity-70" />
         </motion.button>
 
         {/* Left Arc Button (Quick Recenter) */}
@@ -1228,37 +1264,132 @@ export const PaperRocketTactileWheel: React.FC<FeatherTactileWheelProps> = ({
 
         {/* MODE 2: ROLLING 3D TOY SPHERE (Real Three.js WebGPU/WebGL 3D Sphere Trackball) */}
         {subMode === 'ball' && (
+          <div className="relative flex flex-col items-center justify-center">
+            {/* 1-Click Toggle: Globe ↔ 45° Slider */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                playHapticSound('click', soundEnabled);
+                setSubMode('slider');
+              }}
+              className="absolute -top-3.5 z-30 px-2 py-0.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-[9px] font-mono text-zinc-300 hover:text-white transition-all cursor-pointer shadow-sm backdrop-blur-md"
+              title="Click to Switch Globe to 45° Angle Slider"
+            >
+              Switch to Slider →
+            </button>
+            <div
+              id="feather-trackball-sphere"
+              className={`relative ${
+                isBiggerUI ? 'w-40 h-40' : 'w-28 h-28'
+              } rounded-full bg-[#121214] border-2 border-neutral-800 shadow-[inset_0_4px_16px_rgba(0,0,0,0.8)] flex items-center justify-center overflow-hidden z-20`}
+            >
+              <ThreeTrackball
+                yaw={spatialState.yaw}
+                pitch={spatialState.pitch}
+                soundEnabled={soundEnabled}
+                size={isBiggerUI ? 160 : 112}
+                onDragStateChange={setIsRollingBall}
+                onVelocityChange={(v) => {
+                  activeVelocityRef.current = v;
+                }}
+                onRotate={(deltaYaw, deltaPitch) => {
+                  onUpdateSpatial((prev) => ({
+                    ...prev,
+                    yaw: (prev.yaw + deltaYaw) % 360,
+                    pitch: Math.max(-85, Math.min(85, prev.pitch + deltaPitch)),
+                  }));
+
+                  if (engine) {
+                    if (targetScope === 'active_layer' || targetScope === 'model' || targetScope === 'strokes') {
+                      engine.rotateTrackball(deltaYaw * 0.8, -deltaPitch * 0.8, targetScope);
+                    } else {
+                      engine.orbitCamera(-deltaYaw * 0.015, -deltaPitch * 0.015);
+                    }
+                  }
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* MODE 4: PRECISION 45° ROTATION SLIDER */}
+        {subMode === 'slider' && (
           <div
-            id="feather-trackball-sphere"
+            id="feather-rotation-slider"
             className={`relative ${
               isBiggerUI ? 'w-40 h-40' : 'w-28 h-28'
-            } rounded-full bg-[#121214] border-2 border-neutral-800 shadow-[inset_0_4px_16px_rgba(0,0,0,0.8)] flex items-center justify-center overflow-hidden z-20`}
+            } rounded-full bg-[#121214] border-2 border-neutral-800 shadow-[inset_0_4px_16px_rgba(0,0,0,0.8)] flex flex-col items-center justify-center p-2 z-20 select-none`}
           >
-            <ThreeTrackball
-              yaw={spatialState.yaw}
-              pitch={spatialState.pitch}
-              soundEnabled={soundEnabled}
-              size={isBiggerUI ? 160 : 112}
-              onDragStateChange={setIsRollingBall}
-              onVelocityChange={(v) => {
-                activeVelocityRef.current = v;
+            {/* Switch back to 3D Globe Button */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                playHapticSound('click', soundEnabled);
+                setSubMode('ball');
               }}
-              onRotate={(deltaYaw, deltaPitch) => {
-                onUpdateSpatial((prev) => ({
-                  ...prev,
-                  yaw: (prev.yaw + deltaYaw) % 360,
-                  pitch: Math.max(-85, Math.min(85, prev.pitch + deltaPitch)),
-                }));
+              className="absolute -top-3.5 z-30 px-2 py-0.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-[9px] font-mono text-zinc-300 hover:text-white transition-all cursor-pointer shadow-sm backdrop-blur-md"
+              title="Click to Switch back to 3D Globe"
+            >
+              ← Switch to Globe
+            </button>
 
-                if (engine) {
-                  if (targetScope === 'active_layer' || targetScope === 'model' || targetScope === 'strokes') {
-                    engine.rotateTrackball(deltaYaw * 0.8, -deltaPitch * 0.8, targetScope);
-                  } else {
-                    engine.orbitCamera(-deltaYaw * 0.015, -deltaPitch * 0.015);
-                  }
+            {/* Central Digital Angle Readout (Click to Reset 0°) */}
+            <button
+              type="button"
+              onClick={() => {
+                playHapticSound('click', soundEnabled);
+                const cur = (puckRotationDeg % 360 + 360) % 360;
+                if (cur !== 0) {
+                  handleStepRotateCanvas(-cur);
                 }
               }}
-            />
+              className="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 text-white font-mono font-bold text-xs flex flex-col items-center cursor-pointer transition-colors"
+              title="Click to Reset to 0°"
+            >
+              <span className="text-sm font-extrabold text-white">
+                {Math.round(((puckRotationDeg % 360) + 360) % 360)}°
+              </span>
+              <span className="text-[8px] text-zinc-400 font-sans uppercase tracking-wider">Reset 0°</span>
+            </button>
+
+            {/* 1-Click 45° Step Buttons */}
+            <div className="flex items-center gap-1.5 mt-2">
+              <button
+                type="button"
+                onClick={() => handleStepRotateCanvas(-45)}
+                className="px-2 py-1 rounded-lg bg-white/10 hover:bg-white/25 active:scale-95 text-white text-[10px] font-mono font-bold border border-white/10 shadow-sm transition-all cursor-pointer"
+                title="Rotate -45° (CCW)"
+              >
+                -45°
+              </button>
+              <button
+                type="button"
+                onClick={() => handleStepRotateCanvas(45)}
+                className="px-2 py-1 rounded-lg bg-white/10 hover:bg-white/25 active:scale-95 text-white text-[10px] font-mono font-bold border border-white/10 shadow-sm transition-all cursor-pointer"
+                title="Rotate +45° (CW)"
+              >
+                +45°
+              </button>
+            </div>
+
+            {/* Cardinal Angle Quick Snaps */}
+            <div className="grid grid-cols-4 gap-1 mt-1.5 w-full px-1">
+              {[0, 90, 180, 270].map((deg) => (
+                <button
+                  key={deg}
+                  type="button"
+                  onClick={() => {
+                    const cur = ((puckRotationDeg % 360) + 360) % 360;
+                    handleStepRotateCanvas(deg - cur);
+                  }}
+                  className="py-0.5 rounded bg-white/5 hover:bg-white/15 text-[8.5px] font-mono text-zinc-300 hover:text-white transition-colors cursor-pointer text-center"
+                >
+                  {deg}°
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
@@ -1325,6 +1456,55 @@ export const PaperRocketTactileWheel: React.FC<FeatherTactileWheelProps> = ({
           </div>
         )}
       </motion.div>
+
+        {/* 1-Click 45° Auto Canvas Rotation Quick-Step Bar */}
+        <div className="absolute bottom-2.5 left-11 right-11 z-30 flex items-center justify-center gap-1 select-none">
+          {/* Step Rotate -45° CCW */}
+          <button
+            id="wheel-step-rotate-ccw"
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleStepRotateCanvas(-45);
+            }}
+            className="px-1.5 py-1 rounded-lg bg-white/[0.08] hover:bg-white/[0.18] active:scale-90 text-[10px] font-mono font-bold text-zinc-300 hover:text-white border border-white/[0.06] shadow-sm transition-all cursor-pointer"
+            title="Auto Rotate Canvas -45° (CCW)"
+          >
+            -45°
+          </button>
+
+          {/* Current Angle Indicator (Click to Reset 0°) */}
+          <button
+            id="wheel-step-rotate-reset"
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              playHapticSound('click', soundEnabled);
+              const cur = (puckRotationDeg % 360 + 360) % 360;
+              if (cur !== 0) {
+                handleStepRotateCanvas(-cur);
+              }
+            }}
+            className="px-1.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.12] text-[9.5px] font-mono font-semibold text-zinc-400 hover:text-white border border-white/[0.04] transition-all cursor-pointer"
+            title="Click to Reset Canvas Rotation (0°)"
+          >
+            {Math.round(((puckRotationDeg % 360) + 360) % 360)}°
+          </button>
+
+          {/* Step Rotate +45° CW */}
+          <button
+            id="wheel-step-rotate-cw"
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleStepRotateCanvas(45);
+            }}
+            className="px-1.5 py-1 rounded-lg bg-white/[0.08] hover:bg-white/[0.18] active:scale-90 text-[10px] font-mono font-bold text-zinc-300 hover:text-white border border-white/[0.06] shadow-sm transition-all cursor-pointer"
+            title="Auto Rotate Canvas +45° (CW)"
+          >
+            +45°
+          </button>
+        </div>
 
         {/* Bottom-Left Settings Toggle (Repositioned into bottom-left corner) */}
         <button

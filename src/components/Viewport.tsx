@@ -1229,6 +1229,28 @@ const ViewportComponent: React.FC<ViewportProps> = ({
           <Compass className="w-4 h-4" />
         </button>
         <button
+          type="button"
+          onClick={() => {
+            engineRef.current?.stepRotateCanvas(-45, 'all');
+            showNavPod(3000);
+          }}
+          className="px-2 py-1.5 rounded-xl hover:bg-neutral-800 text-neutral-300 hover:text-white text-xs font-mono font-bold transition-colors"
+          title="Auto Rotate Canvas -45° (CCW)"
+        >
+          ↺ 45°
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            engineRef.current?.stepRotateCanvas(45, 'all');
+            showNavPod(3000);
+          }}
+          className="px-2 py-1.5 rounded-xl hover:bg-neutral-800 text-neutral-300 hover:text-white text-xs font-mono font-bold transition-colors"
+          title="Auto Rotate Canvas +45° (CW)"
+        >
+          45° ↻
+        </button>
+        <button
           onClick={() => {
             setIsPanMode(!isPanMode);
             showNavPod(3000);

@@ -613,7 +613,7 @@ export type ActiveControllerType = 'navigator' | 'tactile' | 'both' | 'hidden';
 
 export type SpatialMode = '2d' | '3d' | 'tactile_ball';
 
-export type SubWheelMode = 'joystick' | 'ball' | 'dial';
+export type SubWheelMode = 'joystick' | 'ball' | 'dial' | 'slider';
 
 export interface SpatialState {
   x: number;

@@ -3632,6 +3632,21 @@ export class StudioEngine {
   }
 
   /**
+   * 1-Click 45-Degree Step Canvas/Selection Rotation:
+   * Smoothly steps the canvas or 3D model by +45° or -45° increments around the screen center.
+   */
+  public stepRotateCanvas(degrees: number = 45, scope: TransformTargetScope = 'all'): void {
+    const rad = (degrees * Math.PI) / 180;
+    this.beginTransform(scope);
+    // Ignore sensitivity scaling for exact discrete degree stepping
+    const prevSens = this.navigatorSensitivity;
+    this.navigatorSensitivity = 1.0;
+    this.rotateScreenSpace(rad, scope, false);
+    this.navigatorSensitivity = prevSens;
+    this.endTransform();
+  }
+
+  /**
    * 3D Global Absolute Translation:
    * Dragging Red (X), Green (Y), or Blue (Z) moves object strictly along global axis.
    */

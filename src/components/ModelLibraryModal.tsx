@@ -90,7 +90,6 @@ export const ModelLibraryModal: React.FC<ModelLibraryModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [loadDisplayMode, setLoadDisplayMode] = useState<ModelDisplayMode>('texture');
   const [urlInput, setUrlInput] = useState('');
 
@@ -103,28 +102,15 @@ export const ModelLibraryModal: React.FC<ModelLibraryModalProps> = ({
     return () => window.removeEventListener('keydown', handleKey);
   }, [onClose]);
 
-  const categories = [
-    { id: 'All', label: 'All' },
-    { id: 'Anime & Manga', label: 'Anime' },
-    { id: 'Characters & Figures', label: 'Characters' },
-    { id: 'Houses & Architecture', label: 'Houses' },
-    { id: 'Vehicles & Tech', label: 'Vehicles' },
-    { id: 'Animals & Creatures', label: 'Animals' },
-    { id: 'Shapes & Benchmarks', label: 'Shapes' },
-  ];
-
   const filteredPresets = useMemo(() => {
     return presets.filter((p) => {
-      const matchesCat =
-        selectedCategory === 'All' || p.category === selectedCategory;
       const matchesSearch =
         searchQuery.trim() === '' ||
         p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.category.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesCat && matchesSearch;
+        p.description.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesSearch;
     });
-  }, [presets, selectedCategory, searchQuery]);
+  }, [presets, searchQuery]);
 
   const handleSelectPreset = async (preset: PresetModelDefinition) => {
     if (!engine) return;
@@ -227,67 +213,44 @@ export const ModelLibraryModal: React.FC<ModelLibraryModalProps> = ({
           </div>
         </div>
 
-        {/* Filter Bar: Surface Mode, Search, Clean Category Pills */}
-        <div className="px-4 sm:px-6 py-3 flex flex-col gap-2.5 border-b border-zinc-800/80 bg-[#121318]">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
-            {/* Search Input */}
-            <div className="relative flex-1">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search models (Pusheen, Pokemon, Akira, Castle, Houses...)"
-                className="w-full bg-[#18191f] border border-zinc-700/70 rounded-xl pl-9 pr-3 py-1.5 text-xs text-white placeholder-zinc-400 focus:outline-none focus:border-zinc-400 font-sans"
-              />
-            </div>
-
-            {/* Surface Mode Pill */}
-            <div className="flex items-center bg-[#18191f] p-0.5 rounded-xl border border-zinc-700/70 shrink-0">
-              <button
-                type="button"
-                onClick={() => setLoadDisplayMode('texture')}
-                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
-                  loadDisplayMode === 'texture'
-                    ? 'bg-white text-zinc-950 shadow-sm'
-                    : 'text-zinc-400 hover:text-white'
-                }`}
-              >
-                Textured
-              </button>
-              <button
-                type="button"
-                onClick={() => setLoadDisplayMode('clay')}
-                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
-                  loadDisplayMode === 'clay'
-                    ? 'bg-white text-zinc-950 shadow-sm'
-                    : 'text-zinc-400 hover:text-white'
-                }`}
-              >
-                White Canvas
-              </button>
-            </div>
+        {/* Filter Bar: Surface Mode & Search Input (No Categories) */}
+        <div className="px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 border-b border-zinc-800/80 bg-[#121318]">
+          {/* Search Input */}
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search 3D models..."
+              className="w-full bg-[#18191f] border border-zinc-700/70 rounded-xl pl-9 pr-3 py-1.5 text-xs text-white placeholder-zinc-400 focus:outline-none focus:border-zinc-400 font-sans"
+            />
           </div>
 
-          {/* Clean Plain-Text Category Pills (No Ugly Icons) */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-            {categories.map((cat) => {
-              const active = selectedCategory === cat.id;
-              return (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
-                    active
-                      ? 'bg-white text-zinc-950 font-bold'
-                      : 'bg-zinc-800/60 text-zinc-300 hover:bg-zinc-800 hover:text-white'
-                  }`}
-                >
-                  {cat.label}
-                </button>
-              );
-            })}
+          {/* Surface Mode Pill */}
+          <div className="flex items-center bg-[#18191f] p-0.5 rounded-xl border border-zinc-700/70 shrink-0">
+            <button
+              type="button"
+              onClick={() => setLoadDisplayMode('texture')}
+              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+                loadDisplayMode === 'texture'
+                  ? 'bg-white text-zinc-950 shadow-sm'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              Textured
+            </button>
+            <button
+              type="button"
+              onClick={() => setLoadDisplayMode('clay')}
+              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+                loadDisplayMode === 'clay'
+                  ? 'bg-white text-zinc-950 shadow-sm'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              White Canvas
+            </button>
           </div>
         </div>
 
@@ -325,20 +288,15 @@ export const ModelLibraryModal: React.FC<ModelLibraryModalProps> = ({
                     <ModelPreviewThumbnail category={preset.category} name={preset.name} />
 
                     {/* Model Details */}
-                    <div className="mt-2 px-0.5 flex flex-col gap-0.5">
-                      <div className="flex items-center justify-between gap-1">
-                        <span className="text-[10px] font-mono text-zinc-400 truncate">
-                          {preset.category.replace(' & Architecture', '').replace(' & Figures', '').replace(' & Manga', '')}
-                        </span>
-                        {isCurrent && (
-                          <span className="flex items-center gap-0.5 text-[9px] px-1 py-0.2 rounded bg-emerald-400 text-zinc-950 font-bold">
-                            <Check className="w-2.5 h-2.5" /> Active
-                          </span>
-                        )}
-                      </div>
+                    <div className="mt-2 px-0.5 flex items-center justify-between gap-1">
                       <h3 className="text-xs font-bold text-white group-hover:text-sky-300 transition-colors truncate">
                         {preset.name}
                       </h3>
+                      {isCurrent && (
+                        <span className="flex items-center gap-0.5 text-[9px] px-1.5 py-0.2 rounded bg-emerald-400 text-zinc-950 font-bold shrink-0">
+                          <Check className="w-2.5 h-2.5" /> Active
+                        </span>
+                      )}
                     </div>
                   </button>
                 );
